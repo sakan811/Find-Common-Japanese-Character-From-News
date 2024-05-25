@@ -27,7 +27,7 @@ jobs:
       with:
         name: 'japan-news-scraper'
         runtime: 'python312'
-        source_dir: 'gcp_japan_news_scraper.py'
+        source: './gcp_japan_news_scraper.py'
 
     # Example of using the output
     - id: 'test'
