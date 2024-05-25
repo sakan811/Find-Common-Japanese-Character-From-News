@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+permissions:
+  contents: 'read'
+  id-token: 'write'
+
 env:
   JSON: ${{ secrets.GCP_JSON_CREDENTIAL }}
 
