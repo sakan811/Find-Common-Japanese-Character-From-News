@@ -68,17 +68,21 @@ class GcpDataTransformer(DataTransformer):
         :return: List of kanji.
         """
         logging.info('Extract kanji from text list.')
-        words = []
+        kanji_list = []
         for href, text in text_dict.items():
-            words = [m.dictionary_form() for m in self.tokenizer_obj.tokenize(text, self.mode)]
+            if isinstance(text, str):
+                words = [m.dictionary_form() for m in self.tokenizer_obj.tokenize(text, self.mode)]
+                kanji_list.extend(words)
 
-            for word in words:
-                self.df = self.df.append({'Kanji': word, 'Source': href}, ignore_index=True)
+                for word in words:
+                    self.df = self.df.append({'Kanji': word, 'Source': href}, ignore_index=True)
+            else:
+                logging.warning(f'Invalid text format for {href}. Expected a string.')
 
-        if not words:
+        if not kanji_list:
             logging.warning('No kanji found.')
 
-        return words
+        return kanji_list
 
 
 def save_dataframe_to_gcs(df, bucket_name, destination_blob_name):
