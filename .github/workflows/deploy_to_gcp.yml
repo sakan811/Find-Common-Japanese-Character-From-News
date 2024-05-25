@@ -6,7 +6,6 @@ on:
       - master
 
 env:
-  PROJECT_ID: ${{ secrets.MY_PROJECT_ID }}
   JSON: ${{ secrets.GCP_JSON_CREDENTIAL }}
 
 jobs:
@@ -22,7 +21,6 @@ jobs:
     - id: 'auth'
       uses: 'google-github-actions/auth@v2'
       with:
-        project_id: ${{ env.PROJECT_ID }}
         credentials_json: ${{ env.JSON }}
 
     - id: 'deploy'
