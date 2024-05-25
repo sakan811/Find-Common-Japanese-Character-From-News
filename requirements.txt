@@ -6,3 +6,6 @@ unidic-lite~=1.0.8
 SudachiDict-core>=20240409
 cutlet~=0.4.0
 SudachiPy~=0.6.8
+pandas~=2.2.2
+functions-framework==3.*
+google-cloud-storage~=2.16.0

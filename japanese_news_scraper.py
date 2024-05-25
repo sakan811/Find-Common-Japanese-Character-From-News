@@ -1,128 +1,108 @@
-import requests
+#    Copyright 2024 Sakan Nirattisaykul
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+
+
+import datetime
+import logging
+import re
 import sqlite3
-from bs4 import BeautifulSoup
+
 import pandas as pd
-from sudachipy import Tokenizer, tokenizer, dictionary
 
+from japan_news_scraper.data_transformer import DataTransformer
+from japan_news_scraper.news_scraper import NewsScraper
 
-def fetch_and_parse_url(url):
-    """Fetch the content of a URL and parse it with BeautifulSoup."""
-    response = requests.get(url)
-    return BeautifulSoup(response.text, 'html.parser')
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)  # Set logging level
 
+# Create a FileHandler with overwritten mode ('w')
+file_handler = logging.FileHandler('japan_news.log', mode='w')
 
-def extract_href_tags(soup):
-    """Extract all href attributes from anchor tags in the given BeautifulSoup object."""
-    href_tags = soup.find_all('a', href=True)
-    return [tag['href'] for tag in href_tags]
+# Define a custom log format
+log_format = '%(asctime)s | %(filename)s | line:%(lineno)d | %(funcName)s | %(levelname)s | %(message)s'
 
+# Create a Formatter with the custom log format
+formatter = logging.Formatter(log_format)
 
-def get_unique_hrefs(url):
-    """Get a list of unique hrefs from the given URL."""
-    soup = fetch_and_parse_url(url)
-    href_list = extract_href_tags(soup)
-    return list(set(href_list))
+# Set the Formatter for the FileHandler
+file_handler.setFormatter(formatter)
 
-
-def crawl_urls(base_url, hrefs):
-    """Crawl through each URL in the hrefs list and extract nested hrefs."""
-    all_hrefs = set(hrefs)
-    for href in hrefs:
-        full_url = base_url + href
-        nested_hrefs = get_unique_hrefs(full_url)
-        all_hrefs.update(nested_hrefs)
-    return list(all_hrefs)
-
-
-def extract_text():
-    text_list = []
-    for href in cleaned_href_list:
-        url = 'https://www3.nhk.or.jp' + href
-
-        # Visit each URL
-        inner_response = requests.get(url)
-        inner_response.encoding = 'utf-8'
-        inner_soup = BeautifulSoup(inner_response.text, 'html.parser')
-
-        # Example: Extract text from paragraph tags
-        paragraphs = inner_soup.find_all('section', class_='content--detail-main')
-
-        text_list += append_extracted_text(paragraphs)
-    print(text_list)
-    return text_list
-
-
-def append_extracted_text(paragraphs):
-    paragraph_list = []
-    for paragraph in paragraphs:
-        paragraph_list.append(paragraph.text)
-    return paragraph_list
-
+# Add the FileHandler to the root logger
+logging.getLogger().addHandler(file_handler)
 
 if __name__ == '__main__':
     # Main code
     base_url = 'https://www3.nhk.or.jp'
     initial_url = base_url + '/news/'
 
+    news_scraper = NewsScraper()
+    data_transformer = DataTransformer()
+
+    sqlite_db = 'japan_news.db'
+
     # Step 1: Get the initial list of unique hrefs from the main news page
-    initial_hrefs = get_unique_hrefs(initial_url)
+    initial_hrefs = news_scraper.get_unique_hrefs(initial_url)
+    cleaned_href_list = [href for href in initial_hrefs if not href.startswith('#') and not href.startswith('https:')]
 
-    # Step 2: Crawl through each initial href to find nested hrefs
-    all_hrefs = crawl_urls(base_url, initial_hrefs)
+    with sqlite3.connect(sqlite_db) as conn:
+        query = '''
+            CREATE TABLE IF NOT EXISTS NewsUrls (
+            Url TEXT PRIMARY KEY,
+            TimeStamp TEXT
+        )
+        '''
+        conn.execute(query)
 
-    href_list = list(set(all_hrefs))
+        # Filter out URLs that already exist in the table
+        new_hrefs = data_transformer.filter_new_urls(conn, cleaned_href_list)
 
-    cleaned_href_list = [href for href in href_list if not href.startswith('#') and not href.startswith('https:')]
-    joined_text_list = extract_text()
+        # Prepare DataFrame for new URLs
+        if new_hrefs:
+            df = pd.DataFrame(new_hrefs, columns=['Url'])
+            df['TimeStamp'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            df.to_sql('NewsUrls', conn, if_exists='append', index=False)
 
-    tokenizer_obj: Tokenizer = dictionary.Dictionary().create()
+    joined_text_list: list[str] = news_scraper.extract_text_from_href_list(new_hrefs)
 
-    mode = tokenizer.Tokenizer.SplitMode.C
+    kanji_list = data_transformer.extract_kanji(joined_text_list)
 
-    words = []
-    for text in joined_text_list:
-        words = [m.dictionary_form() for m in tokenizer_obj.tokenize(text, mode)]
-    print(words)
+    pos_list = data_transformer.extract_pos(kanji_list)
 
-    jp_pos_tags = {
-        '代名詞': 'Pronoun',
-        '副詞': 'Adverb',
-        '助動詞': 'Auxiliary verb',
-        '助詞': 'Particle',
-        '動詞': 'Verb',
-        '名詞': 'Noun',
-        '形容詞': 'Adjective',
-        '形状詞': 'Adjectival noun',
-        '感動詞': 'Interjection',
-        '接尾辞': 'Suffix',
-        '接続詞': 'Conjunction',
-        '連体詞': 'Pre-noun adjectival'
-    }
+    pos_translated_list = data_transformer.translate_pos(pos_list)
 
-    part_of_speech_list = []
-    for word in words:
-        tokenized_word = tokenizer_obj.tokenize(word, mode)
-        if tokenized_word:  # Check if the list is not empty
-            part_of_speech = tokenized_word[0].part_of_speech()
-            if part_of_speech:  # Check if part_of_speech is not empty
-                part_of_speech_list.append(part_of_speech[0])
-            else:
-                part_of_speech_list.append(None)  # Handle case where part_of_speech is empty
-        else:
-            part_of_speech_list.append(None)  # Handle case where tokenized_word is empty
+    df = pd.DataFrame(kanji_list, columns=['Kanji'])
+    df['PartOfSpeech'] = pos_list
+    df['PartOfSpeechEnglish'] = pos_translated_list
+    df['Timestamp'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-    part_of_speech_list = [jp_pos_tags[part_of_speech] for part_of_speech in part_of_speech_list if
-                           part_of_speech in jp_pos_tags]
+    filtered_df = df[~df['PartOfSpeech'].isin(data_transformer.excluded_jp_pos_tags.keys())]
 
-    zipped_data = list(zip(words, part_of_speech_list))
+    # Regular expression to match non-Japanese characters (numbers and English words)
+    non_japanese_pattern = re.compile(r'[a-zA-Z0-9]')
 
-    # Create a DataFrame from the zipped data
-    df = pd.DataFrame(zipped_data, columns=['Word', 'Part of Speech'])
+    # Filter out rows where 'Kanji' contains non-Japanese characters (numbers and English words)
+    filtered_df = filtered_df[~filtered_df['Kanji'].str.contains(non_japanese_pattern)]
 
-    df['Word'] = df['Word'].str.replace(r'[、。「」] = ・ 【 】', '', regex=True)  # Remove unwanted characters
-    df = df[df['Word'].str.strip() != '']  # Filter out blank values
-
-    with sqlite3.connect('japan_news.db') as conn:
-        df.to_sql('japan_news', conn, if_exists='replace')
-
-
+    with sqlite3.connect(sqlite_db) as conn:
+        query = '''
+        create TABLE IF NOT EXISTS JapanNews (
+            ID INTEGER PRIMARY KEY AUTOINCREMENT,
+            Kanji TEXT NOT NULL,
+            PartOfSpeech TEXT NOT NULL,
+            PartOfSpeechEnglish TEXT NOT NULL,
+            TimeStamp TEXT NOT NULL
+        )
+        '''
+        conn.execute(query)
+        filtered_df.to_sql('JapanNews', conn, if_exists='append', index=False)
