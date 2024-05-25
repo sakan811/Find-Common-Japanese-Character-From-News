@@ -24,8 +24,8 @@ jobs:
       uses: 'google-github-actions/deploy-cloud-functions@v3'
       timeout-minutes: 10
       with:
-        name: 'my-function'
-        runtime: 'nodejs22'
+        name: 'japan-news-scraper'
+        runtime: 'python312'
 
     # Example of using the output
     - id: 'test'
