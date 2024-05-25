@@ -18,6 +18,7 @@ jobs:
     - id: 'auth'
       uses: 'google-github-actions/auth@v2'
       with:
+        project_id: ${{ secrets.MY_PROJECT_ID }}
         credentials_json: ${{ secrets.GCP_JSON_CREDENTIAL }}
 
     - id: 'deploy'
