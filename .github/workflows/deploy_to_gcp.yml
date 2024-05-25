@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+env:
+  PROJECT_ID: ${{ secrets.MY_PROJECT_ID }}
+  JSON: ${{ secrets.GCP_JSON_CREDENTIAL }}
+
 jobs:
   job_id:
     runs-on: 'ubuntu-latest'
@@ -18,8 +22,8 @@ jobs:
     - id: 'auth'
       uses: 'google-github-actions/auth@v2'
       with:
-        project_id: ${{ secrets.MY_PROJECT_ID }}
-        credentials_json: ${{ secrets.GCP_JSON_CREDENTIAL }}
+        project_id: PROJECT_ID
+        credentials_json: JSON
 
     - id: 'deploy'
       uses: 'google-github-actions/deploy-cloud-functions@v3'
