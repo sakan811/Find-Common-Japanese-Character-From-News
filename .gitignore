@@ -4,3 +4,6 @@
 /*.db
 /prototype.py
 /scraped_files/
+/scraped_file/
+/japan_news_scraper_gcp/
+/load_file.py
