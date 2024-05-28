@@ -7,3 +7,6 @@
 /scraped_file/
 /japan_news_scraper_gcp/
 /load_file.py
+/*.pbix
+/*.pdf
+/*.pbit

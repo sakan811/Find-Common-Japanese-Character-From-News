@@ -15,10 +15,15 @@
 
 import sqlite3
 
+import cutlet
 import pandas as pd
 import logging
 
 from sudachipy import Tokenizer, dictionary, tokenizer
+
+
+def romanize_kanji(kanji):
+    return cutlet.Cutlet().romaji(kanji)
 
 
 class DataTransformer:
@@ -135,5 +140,6 @@ class DataTransformer:
             pos_translated_list.append(translated_pos)
 
         return pos_translated_list
+
 
 

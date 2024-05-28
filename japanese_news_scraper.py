@@ -20,8 +20,9 @@ import sqlite3
 
 import pandas as pd
 
-from japan_news_scraper.data_transformer import DataTransformer
+from japan_news_scraper.data_transformer import DataTransformer, romanize_kanji
 from japan_news_scraper.news_scraper import NewsScraper
+
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)  # Set logging level
@@ -82,6 +83,7 @@ if __name__ == '__main__':
     pos_translated_list = data_transformer.translate_pos(pos_list)
 
     df = pd.DataFrame(kanji_list, columns=['Kanji'])
+    df['Romanji'] = df['Kanji'].apply(romanize_kanji)
     df['PartOfSpeech'] = pos_list
     df['PartOfSpeechEnglish'] = pos_translated_list
     df['Timestamp'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -99,6 +101,7 @@ if __name__ == '__main__':
         create TABLE IF NOT EXISTS JapanNews (
             ID INTEGER PRIMARY KEY AUTOINCREMENT,
             Kanji TEXT NOT NULL,
+            Romanji TEXT NOT NULL,
             PartOfSpeech TEXT NOT NULL,
             PartOfSpeechEnglish TEXT NOT NULL,
             TimeStamp TEXT NOT NULL
