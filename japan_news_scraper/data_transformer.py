@@ -32,7 +32,7 @@ def romanize_kanji(kanji: str) -> str:
 
 def clean_href_list(initial_hrefs: list[str]) -> list[str]:
     """
-    Clean the initial href list.
+    Clean the initial href list by excluding unwanted URLs.
     :param initial_hrefs: Initial href list.
     :return: A cleaned href list.
     """
