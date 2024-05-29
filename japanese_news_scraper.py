@@ -15,14 +15,14 @@
 
 import datetime
 import logging
-import re
 import sqlite3
 
 import pandas as pd
 
-from japan_news_scraper.data_transformer import DataTransformer, romanize_kanji
-from japan_news_scraper.news_scraper import NewsScraper
-
+from japan_news_scraper.data_transformer import DataTransformer, romanize_kanji, clean_href_list, \
+    filter_out_urls_existed_in_db, \
+    filter_out_non_jp_characters, fetch_exist_url_from_db
+from japan_news_scraper.news_scraper import get_unique_hrefs, extract_text_from_href_list
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)  # Set logging level
@@ -42,19 +42,20 @@ file_handler.setFormatter(formatter)
 # Add the FileHandler to the root logger
 logging.getLogger().addHandler(file_handler)
 
-if __name__ == '__main__':
-    # Main code
+
+def main(sqlite_db: str) -> None:
+    """
+    Main function to start a web-scraping process.
+    :param sqlite_db: SQLite database file path.
+    :return: None
+    """
     base_url = 'https://www3.nhk.or.jp'
     initial_url = base_url + '/news/'
 
-    news_scraper = NewsScraper()
     data_transformer = DataTransformer()
 
-    sqlite_db = 'japan_news.db'
-
-    # Step 1: Get the initial list of unique hrefs from the main news page
-    initial_hrefs = news_scraper.get_unique_hrefs(initial_url)
-    cleaned_href_list = [href for href in initial_hrefs if not href.startswith('#') and not href.startswith('https:')]
+    initial_hrefs = get_unique_hrefs(initial_url)
+    cleaned_href_list = clean_href_list(initial_hrefs)
 
     with sqlite3.connect(sqlite_db) as conn:
         query = '''
@@ -65,16 +66,17 @@ if __name__ == '__main__':
         '''
         conn.execute(query)
 
-        # Filter out URLs that already exist in the table
-        new_hrefs = data_transformer.filter_new_urls(conn, cleaned_href_list)
+        existing_urls = fetch_exist_url_from_db(conn)
 
-        # Prepare DataFrame for new URLs
+        new_hrefs = filter_out_urls_existed_in_db(existing_urls, cleaned_href_list)
+
+        logging.info('Prepare DataFrame for new URLs')
         if new_hrefs:
             df = pd.DataFrame(new_hrefs, columns=['Url'])
             df['TimeStamp'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             df.to_sql('NewsUrls', conn, if_exists='append', index=False)
 
-    joined_text_list: list[str] = news_scraper.extract_text_from_href_list(new_hrefs)
+    joined_text_list: list[str] = extract_text_from_href_list(new_hrefs)
 
     kanji_list = data_transformer.extract_kanji(joined_text_list)
 
@@ -88,13 +90,9 @@ if __name__ == '__main__':
     df['PartOfSpeechEnglish'] = pos_translated_list
     df['Timestamp'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-    filtered_df = df[~df['PartOfSpeech'].isin(data_transformer.excluded_jp_pos_tags.keys())]
+    filtered_df = data_transformer.filter_out_pos(df)
 
-    # Regular expression to match non-Japanese characters (numbers and English words)
-    non_japanese_pattern = re.compile(r'[a-zA-Z0-9]')
-
-    # Filter out rows where 'Kanji' contains non-Japanese characters (numbers and English words)
-    filtered_df = filtered_df[~filtered_df['Kanji'].str.contains(non_japanese_pattern)]
+    filtered_df = filter_out_non_jp_characters(filtered_df)
 
     with sqlite3.connect(sqlite_db) as conn:
         query = '''
@@ -109,3 +107,8 @@ if __name__ == '__main__':
         '''
         conn.execute(query)
         filtered_df.to_sql('JapanNews', conn, if_exists='append', index=False)
+
+
+if __name__ == '__main__':
+    sqlite_db = 'japan_news.db'
+    main(sqlite_db)

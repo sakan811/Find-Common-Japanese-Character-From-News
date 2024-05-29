@@ -11,8 +11,7 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
-
-
+import re
 import sqlite3
 
 import cutlet
@@ -22,8 +21,64 @@ import logging
 from sudachipy import Tokenizer, dictionary, tokenizer
 
 
-def romanize_kanji(kanji):
+def romanize_kanji(kanji: str) -> str:
+    """
+    Romanize kanji.
+    :param kanji: Kanji.
+    :return: Romanized kanji.
+    """
     return cutlet.Cutlet().romaji(kanji)
+
+
+def clean_href_list(initial_hrefs: list[str]) -> list[str]:
+    """
+    Clean the initial href list.
+    :param initial_hrefs: Initial href list.
+    :return: A cleaned href list.
+    """
+    logging.info('Clean initial href list')
+    return [href for href in initial_hrefs if not href.startswith('#') and not href.startswith('https:')]
+
+
+def fetch_exist_url_from_db(conn: sqlite3.Connection) -> list[str]:
+    """
+    Fetch existing URLs from the database.
+    :param conn: SQLite 3 connection.
+    :return: URL list.
+    """
+    logging.info('Fetch existing URLs from the database')
+    existing_urls_query = 'SELECT Url FROM NewsUrls'
+    existing_urls = pd.read_sql_query(existing_urls_query, conn)['Url'].tolist()
+    return existing_urls
+
+
+def filter_out_urls_existed_in_db(existing_urls: list[str], urls: list[str]) -> list[str]:
+    """
+    Filter out URLs that are already in the database.
+    :param existing_urls: Existing URLs from the database as a list.
+    :param urls: URL list.
+    :return: Filtered URL list.
+    """
+    logging.info('Filter out URLs that are already in the database.')
+    new_urls = [url for url in urls if url not in existing_urls]
+
+    if not new_urls:
+        logging.warning('No new URLs found.')
+
+    return new_urls
+
+
+def filter_out_non_jp_characters(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Filter out non-Japanese characters.
+    :param df: Pandas DataFrame.
+    :return: Pandas DataFrame.
+    """
+    logging.info('Filter out non-Japanese characters')
+    # Regular expression to match non-Japanese characters (numbers and English words)
+    non_japanese_pattern = re.compile(r'[a-zA-Z0-9]')
+    # Filter out rows where 'Kanji' contains non-Japanese characters (numbers and English words)
+    return df[~df['Kanji'].str.contains(non_japanese_pattern)]
 
 
 class DataTransformer:
@@ -56,35 +111,6 @@ class DataTransformer:
             "連体詞": "Adnominal",
         }
 
-    def filter_new_urls(self, conn: sqlite3.Connection, urls: list[str]) -> list[str]:
-        """
-        Filter out URLs that are already in the database.
-        :param conn: SQLite 3 connection.
-        :param urls: URL list.
-        :return: Filtered URL list.
-        """
-        existing_urls = self.fetch_exist_url_from_db(conn)
-
-        logging.info('Filter out URLs that are already in the database.')
-        new_urls = [url for url in urls if url not in existing_urls]
-
-        if not new_urls:
-            logging.warning('No new URLs found.')
-
-        return new_urls
-
-    @staticmethod
-    def fetch_exist_url_from_db(conn: sqlite3.Connection) -> list[str]:
-        """
-        Fetch existing URLs from the database.
-        :param conn: SQLite 3 connection.
-        :return: URL list.
-        """
-        logging.info('Fetch existing URLs from the database')
-        existing_urls_query = 'SELECT Url FROM NewsUrls'
-        existing_urls = pd.read_sql_query(existing_urls_query, conn)['Url'].tolist()
-        return existing_urls
-
     def extract_kanji(self, joined_text_list: list[str]) -> list[str]:
         """
         Extract kanji from the text list.
@@ -109,18 +135,18 @@ class DataTransformer:
         """
         logging.info('Extract Part of Speech from the Kanji list.')
         part_of_speech_list = []
-        for word in kanji_list:
-            tokenized_word = self.tokenizer_obj.tokenize(word, self.mode)
+        for kanji in kanji_list:
+            tokenized_kanji = self.tokenizer_obj.tokenize(kanji, self.mode)
 
             # Check if the list is not empty
-            if tokenized_word:
-                part_of_speech = tokenized_word[0].part_of_speech()
+            if tokenized_kanji:
+                part_of_speech = tokenized_kanji[0].part_of_speech()
 
                 # Check if part_of_speech is not empty
                 if part_of_speech:
                     part_of_speech_list.append(part_of_speech[0])
                 else:
-                    # Handle case where part_of_speech is empty
+                    # Handle a case where part_of_speech is empty
                     part_of_speech_list.append(None)
             else:
                 # Handle case where tokenized_word is empty
@@ -141,5 +167,11 @@ class DataTransformer:
 
         return pos_translated_list
 
-
-
+    def filter_out_pos(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Filter out rows with Part of Speech that needed to be excluded.
+        :param df: Pandas dataframe.
+        :return: Pandas dataframe.
+        """
+        logging.info('Filter out rows with Part of Speech that needed to be excluded.')
+        return df[~df['PartOfSpeech'].isin(self.excluded_jp_pos_tags.keys())]
