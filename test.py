@@ -13,7 +13,7 @@ def test_main():
         c = conn.cursor()
         c.execute('SELECT * FROM news')
         rows = c.fetchall()
-        assert rows != []
+        assert len(rows) > 0
 
 
 if __name__ == '__main__':
