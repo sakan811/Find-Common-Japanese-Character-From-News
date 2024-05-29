@@ -6,7 +6,7 @@ Data was collected from 'https://www3.nhk.or.jp'
 
 ## Status
 [![Python application](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/python-app.yml/badge.svg?branch=master&event=push)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/python-app.yml)  
-[![Python application](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/python-app.yml/badge.svg?branch=master&event=push)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/python-app.yml)
+[![CodeQL](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml/badge.svg?branch=master&event=push)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml)
 
 ## Code Base Details
 
