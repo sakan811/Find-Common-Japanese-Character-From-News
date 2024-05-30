@@ -162,8 +162,8 @@ def create_news_url_table(conn: sqlite3.Connection) -> None:
     logging.info('Creating NewsUrls table if not exist')
     query = '''
             CREATE TABLE IF NOT EXISTS NewsUrls (
-            Url TEXT PRIMARY KEY,
-            TimeStamp TEXT
+            Url TEXT NOT NULL PRIMARY KEY,
+            TimeStamp TEXT NOT NULL
         )
         '''
     conn.execute(query)
