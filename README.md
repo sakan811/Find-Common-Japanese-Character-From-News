@@ -5,15 +5,9 @@ Showcase visualizations and code base about the common Japanese words that appea
 Data was collected from 'https://www3.nhk.or.jp'
 
 ## Status
-
-**Push**:  
-[![Python application](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/python-app.yml/badge.svg?branch=master&event=push)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/python-app.yml)  
-[![CodeQL](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml/badge.svg?branch=master&event=push)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml)  
-[![Deploy to GCP](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/deploy-to-gcp.yml/badge.svg?branch=master&event=push)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/deploy-to-gcp.yml)
-
-**Schedule**:  
-[![Python application](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/python-app.yml/badge.svg?branch=master&event=schedule)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/python-app.yml)  
-[![CodeQL](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml/badge.svg?branch=master&event=schedule)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml)
+[![CodeQL](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml)  
+[![Python application](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/python-app.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/python-app.yml)  
+[![Deploy to GCP](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/deploy-to-gcp.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/deploy-to-gcp.yml)
 
 ## Code Base Details
 
