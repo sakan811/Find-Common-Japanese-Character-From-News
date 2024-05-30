@@ -98,7 +98,7 @@ def start_gcp_scraper(request):
             timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
             # Convert DataFrame to CSV string
-            csv_string = filtered_df.to_csv(f'{timestamp}', index=False)
+            csv_string = filtered_df.to_csv(f'{timestamp.replace(":", "_")}.csv', index=False)
 
             bucket_name = 'gcp_japan_news'
 
