@@ -11,20 +11,41 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
-
-
+import datetime
 import logging
-import sqlite3
 
 import functions_framework
+import pandas as pd
 from google.cloud import storage
 
 from japan_news_scraper.data_transformer import DataTransformer, clean_href_list, filter_out_non_jp_characters, \
-    fetch_exist_url_from_db, filter_out_urls_existed_in_db
+    romanize_kanji
 from japan_news_scraper.news_scraper import get_unique_hrefs, extract_text_from_href_list
-from japanese_news_scraper import create_df_for_japan_news_table, create_news_url_table, process_new_hrefs, \
-    create_japan_news_table
+from japanese_news_scraper import create_df_for_japan_news_table, add_timestamp_to_df
 
+
+class GcpTransformer(DataTransformer):
+    def extract_kanji(self, dictionary: dict) -> pd.DataFrame:
+        """
+        Extract kanji from the text list.
+        :param dictionary: Dictionary where key is HREF and value is its text content.
+        :return: DataFrame with HREF as Source and extracted kanji as Kanji columns.
+        """
+        logging.info('Extract kanji from text list.')
+        kanji_data = []
+
+        for href, text_list in dictionary.items():
+            for text in text_list:
+                kanji_list = [m.dictionary_form() for m in self.tokenizer_obj.tokenize(text, self.mode)]
+                if kanji_list:
+                    kanji_data.extend([(href, kanji) for kanji in kanji_list])
+
+        if not kanji_data:
+            logging.warning('No kanji found.')
+
+        # Create DataFrame from the kanji data
+        df = pd.DataFrame(kanji_data, columns=['Source', 'Kanji'])
+        return df
 
 @functions_framework.http
 def start_gcp_scraper(request):
@@ -44,28 +65,9 @@ def start_gcp_scraper(request):
         if request_json and 'name' in request_json:
             base_url = 'https://www3.nhk.or.jp'
             initial_url = base_url + '/news/'
-            sqlite_db = 'gcp_sqlite.db'
-
-            bucket_name = 'gcp_japan_news'
-
-            # Initialize the Google Cloud Storage client
-            storage_client = storage.Client()
-            bucket = storage_client.bucket(bucket_name)
-            blob = bucket.blob(sqlite_db)
-
-            if blob.exists():
-                # Download the file from GCS if it exists
-                logging.info(f"Database {sqlite_db} found in GCS bucket {bucket_name}")
-                # Download the file contents into a variable
-                sqlite_content = blob.download_as_string()
-                logging.info(f"Database {sqlite_db} downloaded from GCS bucket {bucket_name} as variable")
-            else:
-                logging.info(f"No existing database found in GCS bucket {bucket_name}")
-                # Upload the local file to GCS bucket
-                blob.upload_from_filename(sqlite_db)
-                logging.info(f"Database {sqlite_db} uploaded to GCS bucket {bucket_name}")
 
             data_transformer = DataTransformer()
+            gcp_transformer = GcpTransformer()
 
             initial_hrefs = get_unique_hrefs(initial_url)
             logging.info(f"Initial hrefs retrieved: {len(initial_hrefs)}")
@@ -73,37 +75,40 @@ def start_gcp_scraper(request):
             cleaned_href_list = clean_href_list(initial_hrefs)
             logging.info(f"Cleaned href list: {len(cleaned_href_list)}")
 
-            with sqlite3.connect(sqlite_db) as conn:
-                create_news_url_table(conn)
-                existing_urls = fetch_exist_url_from_db(conn)
-                new_hrefs = filter_out_urls_existed_in_db(existing_urls, cleaned_href_list)
-                logging.info(f"New hrefs to process: {len(new_hrefs)}")
-                process_new_hrefs(conn, new_hrefs)
-
-            joined_text_list = extract_text_from_href_list(new_hrefs)
+            joined_text_list = extract_text_from_href_list(cleaned_href_list)
             logging.info("Text extracted from hrefs")
 
-            kanji_list = data_transformer.extract_kanji(joined_text_list)
+            dictionary = dict(zip(cleaned_href_list, joined_text_list))
+
+            df_with_href_and_kanji = gcp_transformer.extract_kanji(dictionary)
+            kanji_list = df_with_href_and_kanji['Kanji'].tolist()
             pos_list = data_transformer.extract_pos(kanji_list)
             pos_translated_list = data_transformer.translate_pos(pos_list)
 
-            df = create_df_for_japan_news_table(kanji_list, pos_list, pos_translated_list)
-            filtered_df = data_transformer.filter_out_pos(df)
+            df_with_href_and_kanji['Romanji'] = df_with_href_and_kanji['Kanji'].apply(romanize_kanji)
+            logging.info('Add PartOfSpeech Column')
+            df_with_href_and_kanji['PartOfSpeech'] = pos_list
+            logging.info('Add PartOfSpeechEnglish Column')
+            df_with_href_and_kanji['PartOfSpeechEnglish'] = pos_translated_list
+            add_timestamp_to_df(df_with_href_and_kanji)
+
+            filtered_df = data_transformer.filter_out_pos(df_with_href_and_kanji)
             filtered_df = filter_out_non_jp_characters(filtered_df)
 
-            with sqlite3.connect(sqlite_db) as conn:
-                create_japan_news_table(conn)
-                filtered_df.to_sql('JapanNews', conn, if_exists='append', index=False)
-                logging.info("Filtered DataFrame saved to SQLite database")
+            timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+            # Convert DataFrame to CSV string
+            csv_string = filtered_df.to_csv(f'{timestamp}', index=False)
+
+            bucket_name = 'gcp_japan_news'
 
             # Initialize the Google Cloud Storage client
             storage_client = storage.Client()
             bucket = storage_client.bucket(bucket_name)
-            blob = bucket.blob(sqlite_db)
 
-            # Upload the file to GCS
-            blob.upload_from_filename(sqlite_db)
-            logging.info(f"Database uploaded to GCS bucket {bucket_name}")
+            # Upload CSV string to GCS
+            blob = bucket.blob(csv_string)
+            blob.upload_from_string(csv_string)
 
             return "Database successfully updated and uploaded to GCS", 200
         else:
