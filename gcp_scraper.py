@@ -97,18 +97,20 @@ def start_gcp_scraper(request):
 
             timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-            # Convert DataFrame to CSV string
-            csv_string = filtered_df.to_csv(f'{timestamp.replace(":", "_")}.csv', index=False)
-
             bucket_name = 'gcp_japan_news'
+
+            # Convert DataFrame to CSV string
+            csv_string = filtered_df.to_csv(index=False)
 
             # Initialize the Google Cloud Storage client
             storage_client = storage.Client()
             bucket = storage_client.bucket(bucket_name)
 
             # Upload CSV string to GCS
-            blob = bucket.blob(csv_string)
+            blob = bucket.blob(f'{timestamp.replace(":", "_")}.csv')
             blob.upload_from_string(csv_string)
+
+            logging.info(f"CSV file uploaded to GCS bucket {bucket_name}")
 
             return "Database successfully updated and uploaded to GCS", 200
         else:
