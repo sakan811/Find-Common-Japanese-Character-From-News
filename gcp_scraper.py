@@ -55,10 +55,15 @@ def start_gcp_scraper(request):
 
             if blob.exists():
                 # Download the file from GCS if it exists
-                blob.download_to_filename(sqlite_db)
-                logging.info(f"Database {sqlite_db} downloaded from GCS bucket {bucket_name}")
+                logging.info(f"Database {sqlite_db} found in GCS bucket {bucket_name}")
+                # Download the file contents into a variable
+                sqlite_content = blob.download_as_string()
+                logging.info(f"Database {sqlite_db} downloaded from GCS bucket {bucket_name} as variable")
             else:
                 logging.info(f"No existing database found in GCS bucket {bucket_name}")
+                # Upload the local file to GCS bucket
+                blob.upload_from_filename(sqlite_db)
+                logging.info(f"Database {sqlite_db} uploaded to GCS bucket {bucket_name}")
 
             data_transformer = DataTransformer()
 
