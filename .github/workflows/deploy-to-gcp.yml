@@ -1,0 +1,34 @@
+name: "Deploy to GCP"
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: 'read'
+  id-token: 'write'
+
+jobs:
+  job_id:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: 'actions/checkout@v4'
+
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: ${{ secrets.KEY_JSON }}
+
+    - id: 'deploy'
+      uses: 'google-github-actions/deploy-cloud-functions@v2'
+      timeout-minutes: 10
+      with:
+        name: 'japan-news-scraper'
+        runtime: 'python312'
+        entry_point: 'start_gcp_scraper'
+
+    # Example of using the output
+    - id: 'test'
+      run: 'curl "${{ steps.deploy.outputs.url }}"'
