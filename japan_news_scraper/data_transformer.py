@@ -103,12 +103,14 @@ class DataTransformer:
             "接頭辞": "Prefix",
             "空白": "Whitespace",
             "補助記号": "Supplementary Symbol",
-            "連体詞": "Adnominal"
+            "連体詞": "Adnominal",
+            "記号": "Symbol"
         }
         self.excluded_jp_pos_tags = {
             "空白": "Whitespace",
             "補助記号": "Supplementary Symbol",
             "連体詞": "Adnominal",
+            "記号": "Symbol"
         }
 
     def extract_kanji(self, joined_text_list: list[str]) -> list[str]:
