@@ -27,7 +27,9 @@ jobs:
       with:
         name: 'japan-news-scraper'
         runtime: 'python312'
-        entry_point: 'gcp_scraper.handler'
+        entry_point: 'start_gcp_scraper'
+        build_environment_variables: |-
+          GOOGLE_FUNCTION_SOURCE=gcp_scraper.py
 
     # Example of using the output
     - id: 'test'
