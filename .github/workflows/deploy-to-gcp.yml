@@ -30,7 +30,7 @@ jobs:
         entry_point: 'start_gcp_scraper'
         build_environment_variables: |-
           GOOGLE_FUNCTION_SOURCE=gcp_scraper.py
-        memory: '1G'
+        memory: '1GB'
 
     # Example of using the output
     - id: 'test'
