@@ -24,11 +24,11 @@ from japan_news_scraper.data_transformer import DataTransformer, romanize_kanji,
     filter_out_non_jp_characters, fetch_exist_url_from_db
 from japan_news_scraper.news_scraper import get_unique_hrefs, extract_text_from_href_list
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)  # Set logging level
+# Set logging level
+logging.basicConfig(level=logging.DEBUG)
 
-# Create a FileHandler with overwritten mode ('w')
-file_handler = logging.FileHandler('japan_news.log', mode='w')
+# Create a StreamHandler (which outputs to the terminal)
+stream_handler = logging.StreamHandler()
 
 # Define a custom log format
 log_format = '%(asctime)s | %(filename)s | line:%(lineno)d | %(funcName)s | %(levelname)s | %(message)s'
@@ -36,11 +36,11 @@ log_format = '%(asctime)s | %(filename)s | line:%(lineno)d | %(funcName)s | %(le
 # Create a Formatter with the custom log format
 formatter = logging.Formatter(log_format)
 
-# Set the Formatter for the FileHandler
-file_handler.setFormatter(formatter)
+# Set the Formatter for the StreamHandler
+stream_handler.setFormatter(formatter)
 
-# Add the FileHandler to the root logger
-logging.getLogger().addHandler(file_handler)
+# Add the StreamHandler to the root logger
+logging.getLogger().addHandler(stream_handler)
 
 
 def main(sqlite_db: str) -> None:
