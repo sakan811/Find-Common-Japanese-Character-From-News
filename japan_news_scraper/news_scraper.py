@@ -102,6 +102,3 @@ def extract_text_from_href_list(href_list: list[str]) -> list[str]:
         logging.warning('No text extracted from the news articles')
 
     return text_list
-
-
-

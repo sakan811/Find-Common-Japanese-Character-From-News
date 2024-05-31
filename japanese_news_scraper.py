@@ -19,28 +19,13 @@ import sqlite3
 
 import pandas as pd
 
+from japan_news_scraper.configure_logging import configure_logging_with_file
 from japan_news_scraper.data_transformer import DataTransformer, romanize_kanji, clean_href_list, \
     filter_out_urls_existed_in_db, \
     filter_out_non_jp_characters, fetch_exist_url_from_db
 from japan_news_scraper.news_scraper import get_unique_hrefs, extract_text_from_href_list
 
-# Set logging level
-logging.basicConfig(level=logging.DEBUG)
-
-# Create a StreamHandler (which outputs to the terminal)
-stream_handler = logging.StreamHandler()
-
-# Define a custom log format
-log_format = '%(asctime)s | %(filename)s | line:%(lineno)d | %(funcName)s | %(levelname)s | %(message)s'
-
-# Create a Formatter with the custom log format
-formatter = logging.Formatter(log_format)
-
-# Set the Formatter for the StreamHandler
-stream_handler.setFormatter(formatter)
-
-# Add the StreamHandler to the root logger
-logging.getLogger().addHandler(stream_handler)
+configure_logging_with_file('japan_news.log')
 
 
 def main(sqlite_db: str) -> None:
@@ -80,6 +65,7 @@ def main(sqlite_db: str) -> None:
     with sqlite3.connect(sqlite_db) as conn:
         create_japan_news_table(conn)
         filtered_df.to_sql('JapanNews', conn, if_exists='append', index=False)
+        logging.info('Append to JapanNews table successfully.')
 
 
 def create_df_for_japan_news_table(

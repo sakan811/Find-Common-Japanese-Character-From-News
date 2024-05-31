@@ -113,9 +113,7 @@ def start_gcp_scraper(request):
 
             logging.info(f"CSV file uploaded to GCS bucket {bucket_name}")
 
-            response = Response("Database successfully updated and uploaded to GCS", status=200)
-            response.send()
+            return Response("Database successfully updated and uploaded to GCS", status=200)
     except Exception as e:
         logging.error(f"An error occurred: {e}", exc_info=True)
-        response = Response("An error occurred during the process", status=500)
-        response.send()
+        return Response("An error occurred during the process", status=500)
