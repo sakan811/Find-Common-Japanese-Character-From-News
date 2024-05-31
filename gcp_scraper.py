@@ -62,7 +62,7 @@ def start_gcp_scraper(request):
 
     try:
         request_json = request.get_json(silent=True)
-        if request_json and 'name' in request_json:
+        if request_json:
             base_url = 'https://www3.nhk.or.jp'
             initial_url = base_url + '/news/'
 
