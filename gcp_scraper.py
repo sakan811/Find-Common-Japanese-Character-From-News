@@ -16,6 +16,7 @@ import logging
 
 import functions_framework
 import pandas as pd
+from flask import Response
 from google.cloud import storage
 
 from japan_news_scraper.data_transformer import DataTransformer, clean_href_list, filter_out_non_jp_characters, \
@@ -112,10 +113,9 @@ def start_gcp_scraper(request):
 
             logging.info(f"CSV file uploaded to GCS bucket {bucket_name}")
 
-            return "Database successfully updated and uploaded to GCS", 200
-        else:
-            logging.error("Request JSON is missing 'name'")
-            return "Invalid request", 400
+            response = Response("Database successfully updated and uploaded to GCS", status=200)
+            response.send()
     except Exception as e:
         logging.error(f"An error occurred: {e}", exc_info=True)
-        return "An error occurred during the process", 500
+        response = Response("An error occurred during the process", status=500)
+        response.send()
