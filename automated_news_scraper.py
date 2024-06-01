@@ -85,7 +85,7 @@ def daily_news_scraper():
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H_%M_%S')
 
     logging.info('Convert DataFrame to CSV')
-    filtered_df.to_csv(f'{timestamp}.csv', index=False, quoting=csv.QUOTE_ALL)
+    filtered_df.to_csv(f'{timestamp}.csv', index=False)
 
 
 daily_news_scraper()
