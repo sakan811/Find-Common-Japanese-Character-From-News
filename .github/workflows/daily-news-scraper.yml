@@ -53,7 +53,7 @@ jobs:
       uses: 'google-github-actions/upload-cloud-storage@v2'
       with:
         path: './'
-        destination: 'weekly_osaka_hotel_data'
+        destination: 'gcp_japan_news'
         glob: '**/*.csv'
 
 
