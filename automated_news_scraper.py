@@ -11,6 +11,7 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
+import csv
 import datetime
 import logging
 
@@ -84,7 +85,7 @@ def daily_news_scraper():
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H_%M_%S')
 
     logging.info('Convert DataFrame to CSV')
-    filtered_df.to_csv(f'{timestamp}.csv', index=False)
+    filtered_df.to_csv(f'{timestamp}.csv', index=False, quoting=csv.QUOTE_ALL)
 
 
 daily_news_scraper()

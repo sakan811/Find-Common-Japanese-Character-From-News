@@ -112,7 +112,7 @@ def process_new_hrefs(conn: sqlite3.Connection, new_hrefs: list[str]) -> None:
 
 def add_timestamp_to_df(df: pd.DataFrame) -> None:
     """
-    Add timestamp to DataFrame.
+    Add a timestamp column to the given DataFrame.
     :param df: Pandas DataFrame
     :return: None
     """
