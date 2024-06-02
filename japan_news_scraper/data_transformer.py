@@ -11,6 +11,7 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
+import datetime
 import logging
 import re
 import sqlite3
@@ -27,6 +28,16 @@ def romanize_kanji(kanji: str) -> str:
     :return: Romanized kanji.
     """
     return cutlet.Cutlet().romaji(kanji)
+
+
+def add_timestamp_to_df(df: pd.DataFrame) -> None:
+    """
+    Add a timestamp column to the given DataFrame.
+    :param df: Pandas DataFrame
+    :return: None
+    """
+    logging.info('Add TimeStamp column to DataFrame')
+    df['TimeStamp'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def clean_href_list(initial_hrefs: list[str]) -> list[str]:

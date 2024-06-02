@@ -12,7 +12,7 @@ Data was collected from 'https://www3.nhk.or.jp'
 ## Code Base Details
 
 ### To web-scrape 'https://www3.nhk.or.jp'
-- Go to [japanese_news_scraper.py](japanese_news_scraper.py)
+- Go to [main.py](main.py)
 - Adjust the SQLite database name as needed
     ```
     sqlite_db = 'japan_news.db' # adjust as needed
@@ -27,8 +27,8 @@ Data was collected from 'https://www3.nhk.or.jp'
 [news_scraper.py](japan_news_scraper%2Fnews_scraper.py)
 - Contain functions related to fetching the data from 'https://www3.nhk.or.jp'
 
-[migrate_to_sqlite.py](japan_news_scraper%2Fmigrate_to_sqlite.py)
-- Contain functions related to SQLite database.
-
 [configure_logging.py](japan_news_scraper%2Fconfigure_logging.py)
 - Contain functions about logging configurations.
+
+[sqlite_functions.py](japan_news_scraper%2Fsqlite_functions.py)
+- Contain functions related to SQLite database.

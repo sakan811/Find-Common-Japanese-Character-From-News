@@ -13,53 +13,43 @@
 #    limitations under the License.
 
 
-import datetime
 import logging
 import sqlite3
 
 import pandas as pd
-from pandas import DataFrame
 
-from japan_news_scraper.configure_logging import configure_logging_with_file
-from japan_news_scraper.data_transformer import DataTransformer, romanize_kanji, clean_href_list, \
-    filter_out_non_jp_characters
-from japan_news_scraper.migrate_to_sqlite import migrate_to_sqlite, get_new_urls
-from japan_news_scraper.news_scraper import get_unique_hrefs, extract_text_from_href_list
-
-configure_logging_with_file('japan_news.log')
+from .data_transformer import romanize_kanji, fetch_exist_url_from_db, filter_out_urls_existed_in_db, \
+    add_timestamp_to_df
 
 
-def main(sqlite_db: str) -> None:
+def migrate_to_sqlite(filtered_df, sqlite_db) -> None:
     """
-    Main function to start a web-scraping process.
-    :param sqlite_db: SQLite database file path.
-    :return: None.
+    Save filtered DataFrame to SQLite database.
+    :param filtered_df: Filtered DataFrame.
+    :param sqlite_db: Sqlite database file path.
+    :return: None
     """
-    base_url = 'https://www3.nhk.or.jp'
-    initial_url = base_url + '/news/'
+    logging.info('Migrate data to SQLite database.')
+    with sqlite3.connect(sqlite_db) as conn:
+        create_japan_news_table(conn)
+        filtered_df.to_sql('JapanNews', conn, if_exists='append', index=False)
+        logging.info('Append to JapanNews table successfully.')
 
-    data_transformer = DataTransformer()
 
-    initial_hrefs: list[str] = get_unique_hrefs(initial_url)
-    cleaned_href_list: list[str] = clean_href_list(initial_hrefs)
-
-    new_hrefs = get_new_urls(cleaned_href_list, sqlite_db)
-
-    joined_text_list: list[str] = extract_text_from_href_list(new_hrefs)
-
-    kanji_list: list[str] = data_transformer.extract_kanji(joined_text_list)
-
-    pos_list: list[str] = data_transformer.extract_pos(kanji_list)
-
-    pos_translated_list: list[str] = data_transformer.translate_pos(pos_list)
-
-    df = create_df_for_japan_news_table(kanji_list, pos_list, pos_translated_list)
-
-    filtered_df = data_transformer.filter_out_pos(df)
-
-    filtered_df = filter_out_non_jp_characters(filtered_df)
-
-    migrate_to_sqlite(filtered_df, sqlite_db)
+def get_new_urls(cleaned_href_list, sqlite_db) -> list[str]:
+    """
+    Get new urls from cleaned href list.
+    :param cleaned_href_list: Cleaned href list.
+    :param sqlite_db: SQLite database.
+    :return: New urls as a list.
+    """
+    logging.info('Get new urls from cleaned href list.')
+    with sqlite3.connect(sqlite_db) as conn:
+        create_news_url_table(conn)
+        existing_urls: list[str] = fetch_exist_url_from_db(conn)
+        new_hrefs: list[str] = filter_out_urls_existed_in_db(existing_urls, cleaned_href_list)
+        process_new_hrefs(conn, new_hrefs)
+    return new_hrefs
 
 
 def create_df_for_japan_news_table(
@@ -104,16 +94,6 @@ def process_new_hrefs(conn: sqlite3.Connection, new_hrefs: list[str]) -> None:
         logging.warning('No new URLs found')
 
 
-def add_timestamp_to_df(df: pd.DataFrame) -> None:
-    """
-    Add a timestamp column to the given DataFrame.
-    :param df: Pandas DataFrame
-    :return: None
-    """
-    logging.info('Add TimeStamp column to DataFrame')
-    df['TimeStamp'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-
 def create_japan_news_table(conn: sqlite3.Connection) -> None:
     """
     Create the JapanNews table if not exist.
@@ -150,6 +130,4 @@ def create_news_url_table(conn: sqlite3.Connection) -> None:
 
 
 if __name__ == '__main__':
-    sqlite_db = 'japan_news.db'
-    main(sqlite_db)
-
+    pass

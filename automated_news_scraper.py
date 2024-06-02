@@ -11,7 +11,6 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
-import csv
 import datetime
 import logging
 import pyarrow as pa
@@ -21,7 +20,7 @@ import pandas as pd
 from japan_news_scraper.data_transformer import DataTransformer, clean_href_list, filter_out_non_jp_characters, \
     romanize_kanji
 from japan_news_scraper.news_scraper import get_unique_hrefs, extract_text_from_href_list
-from japanese_news_scraper import add_timestamp_to_df
+from japan_news_scraper.sqlite_functions import add_timestamp_to_df
 
 
 class GcpTransformer(DataTransformer):

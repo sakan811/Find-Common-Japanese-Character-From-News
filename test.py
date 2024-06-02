@@ -2,7 +2,7 @@ import sqlite3
 
 import pytest
 
-from japanese_news_scraper import main
+from japan_news_scraper.sqlite_functions import main
 
 
 def test_main():
