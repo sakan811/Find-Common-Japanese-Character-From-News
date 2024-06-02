@@ -54,6 +54,6 @@ jobs:
       with:
         path: './'
         destination: 'gcp_japan_news'
-        glob: '**/*.csv'
+        glob: '**/*.parquet'
 
 
