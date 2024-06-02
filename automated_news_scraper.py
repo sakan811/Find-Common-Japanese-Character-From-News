@@ -86,12 +86,10 @@ def daily_news_scraper():
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H_%M_%S')
 
     logging.info('Convert DataFrame to Parquet')
-    # Convert the DataFrame to a Pyarrow Table
-    table = pa.Table.from_pandas(filtered_df)
 
+    # Convert the DataFrame to a Pyarrow Table and write it to a Parquet file
     parquet_file_path = f'{timestamp}.parquet'
-
-    # Write the Pyarrow Table to a Parquet file
+    table = pa.Table.from_pandas(filtered_df)
     pq.write_table(table, parquet_file_path)
 
 
