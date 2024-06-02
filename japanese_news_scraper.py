@@ -18,11 +18,12 @@ import logging
 import sqlite3
 
 import pandas as pd
+from pandas import DataFrame
 
 from japan_news_scraper.configure_logging import configure_logging_with_file
 from japan_news_scraper.data_transformer import DataTransformer, romanize_kanji, clean_href_list, \
-    filter_out_urls_existed_in_db, \
-    filter_out_non_jp_characters, fetch_exist_url_from_db
+    filter_out_non_jp_characters
+from japan_news_scraper.migrate_to_sqlite import migrate_to_sqlite, get_new_urls
 from japan_news_scraper.news_scraper import get_unique_hrefs, extract_text_from_href_list
 
 configure_logging_with_file('japan_news.log')
@@ -32,7 +33,7 @@ def main(sqlite_db: str) -> None:
     """
     Main function to start a web-scraping process.
     :param sqlite_db: SQLite database file path.
-    :return: None
+    :return: None.
     """
     base_url = 'https://www3.nhk.or.jp'
     initial_url = base_url + '/news/'
@@ -42,11 +43,7 @@ def main(sqlite_db: str) -> None:
     initial_hrefs: list[str] = get_unique_hrefs(initial_url)
     cleaned_href_list: list[str] = clean_href_list(initial_hrefs)
 
-    with sqlite3.connect(sqlite_db) as conn:
-        create_news_url_table(conn)
-        existing_urls: list[str] = fetch_exist_url_from_db(conn)
-        new_hrefs: list[str] = filter_out_urls_existed_in_db(existing_urls, cleaned_href_list)
-        process_new_hrefs(conn, new_hrefs)
+    new_hrefs = get_new_urls(cleaned_href_list, sqlite_db)
 
     joined_text_list: list[str] = extract_text_from_href_list(new_hrefs)
 
@@ -62,10 +59,7 @@ def main(sqlite_db: str) -> None:
 
     filtered_df = filter_out_non_jp_characters(filtered_df)
 
-    with sqlite3.connect(sqlite_db) as conn:
-        create_japan_news_table(conn)
-        filtered_df.to_sql('JapanNews', conn, if_exists='append', index=False)
-        logging.info('Append to JapanNews table successfully.')
+    migrate_to_sqlite(filtered_df, sqlite_db)
 
 
 def create_df_for_japan_news_table(
@@ -158,3 +152,4 @@ def create_news_url_table(conn: sqlite3.Connection) -> None:
 if __name__ == '__main__':
     sqlite_db = 'japan_news.db'
     main(sqlite_db)
+

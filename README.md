@@ -26,3 +26,9 @@ Data was collected from 'https://www3.nhk.or.jp'
 
 [news_scraper.py](japan_news_scraper%2Fnews_scraper.py)
 - Contain functions related to fetching the data from 'https://www3.nhk.or.jp'
+
+[migrate_to_sqlite.py](japan_news_scraper%2Fmigrate_to_sqlite.py)
+- Contain functions related to SQLite database.
+
+[configure_logging.py](japan_news_scraper%2Fconfigure_logging.py)
+- Contain functions about logging configurations.

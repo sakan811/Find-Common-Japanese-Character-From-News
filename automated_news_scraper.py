@@ -49,7 +49,7 @@ class GcpTransformer(DataTransformer):
 
 
 def daily_news_scraper():
-    logging.info("GCP Scraper Function started")
+    logging.info("Automated Scraper Function started")
 
     base_url = 'https://www3.nhk.or.jp'
     initial_url = base_url + '/news/'
