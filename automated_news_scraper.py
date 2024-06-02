@@ -14,7 +14,8 @@
 import csv
 import datetime
 import logging
-
+import pyarrow as pa
+import pyarrow.parquet as pq
 import pandas as pd
 
 from japan_news_scraper.data_transformer import DataTransformer, clean_href_list, filter_out_non_jp_characters, \
@@ -84,8 +85,14 @@ def daily_news_scraper():
 
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H_%M_%S')
 
-    logging.info('Convert DataFrame to CSV')
-    filtered_df.to_csv(f'{timestamp}.csv', index=False)
+    logging.info('Convert DataFrame to Parquet')
+    # Convert the DataFrame to a Pyarrow Table
+    table = pa.Table.from_pandas(filtered_df)
+
+    parquet_file_path = f'{timestamp}.parquet'
+
+    # Write the Pyarrow Table to a Parquet file
+    pq.write_table(table, parquet_file_path)
 
 
 daily_news_scraper()
