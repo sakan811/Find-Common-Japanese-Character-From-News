@@ -85,11 +85,18 @@ def daily_news_scraper():
 
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H_%M_%S')
 
+    # Convert the filtered DataFrame to CSV
+    csv_file_path = f'{timestamp}.csv'
+    filtered_df.to_csv(csv_file_path, index=False)
+
     logging.info('Convert DataFrame to Parquet')
+
+    # Read the CSV file back into a DataFrame
+    df = pd.read_csv(csv_file_path)
 
     # Convert the DataFrame to a Pyarrow Table and write it to a Parquet file
     parquet_file_path = f'{timestamp}.parquet'
-    table = pa.Table.from_pandas(filtered_df)
+    table = pa.Table.from_pandas(df)
     pq.write_table(table, parquet_file_path)
 
 
