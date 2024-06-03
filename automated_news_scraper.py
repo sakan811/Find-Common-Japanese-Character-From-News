@@ -13,17 +13,19 @@
 #    limitations under the License.
 import datetime
 import logging
+
+import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
-import pandas as pd
 
-from jp_news_scraper_pipeline.jp_news_scraper.data_extractor import extract_pos, translate_pos
-from jp_news_scraper_pipeline.jp_news_scraper.data_transformer import clean_url_list, filter_out_non_jp_characters, \
-    romanize_kanji, add_timestamp_to_df, filter_out_pos
-from jp_news_scraper_pipeline.jp_news_scraper.news_scraper import get_unique_urls, extract_text_from_url_list
 from jp_news_scraper_pipeline.configure_logging import configure_logging
-from jp_news_scraper_pipeline.jp_news_scraper.utils import get_tokenizer, get_tokenizer_mode
-from jp_news_scraper_pipeline.pipeline import check_list_len
+from jp_news_scraper_pipeline.jp_news_scraper.data_extractor import extract_pos, translate_pos
+from jp_news_scraper_pipeline.jp_news_scraper.data_transformer import filter_out_non_jp_characters, \
+    romanize_kanji, add_timestamp_to_df, filter_out_pos
+from jp_news_scraper_pipeline.jp_news_scraper.news_scraper import extract_text_from_url_list
+from jp_news_scraper_pipeline.jp_news_scraper.utils import get_tokenizer, get_tokenizer_mode, \
+    check_if_all_list_len_is_equal
+from jp_news_scraper_pipeline.pipeline import get_cleaned_url_list
 
 configure_logging()
 
@@ -58,28 +60,21 @@ def daily_news_scraper():
     base_url = 'https://www3.nhk.or.jp'
     initial_url = base_url + '/news/'
 
-    initial_hrefs = get_unique_urls(initial_url)
-    logging.info(f"Initial hrefs retrieved: {len(initial_hrefs)}")
+    cleaned_url_list: list[str] = get_cleaned_url_list(initial_url)
 
-    cleaned_href_list = clean_url_list(initial_hrefs)
-    logging.info(f"Cleaned href list: {len(cleaned_href_list)}")
-
-    joined_text_list = extract_text_from_url_list(cleaned_href_list)
+    joined_text_list = extract_text_from_url_list(cleaned_url_list)
     logging.info("Text extracted from hrefs")
 
-    dictionary = dict(zip(cleaned_href_list, joined_text_list))
+    dictionary = dict(zip(cleaned_url_list, joined_text_list))
 
     df_with_href_and_kanji = extract_kanji_from_dict(dictionary)
     kanji_list = df_with_href_and_kanji['Kanji'].tolist()
     pos_list = extract_pos(kanji_list)
     pos_translated_list = translate_pos(pos_list)
 
-    list_len: tuple = check_list_len(kanji_list, pos_list, pos_translated_list)
-    kanji_list_len = list_len[0]
-    pos_list_len = list_len[1]
-    pos_translated_list_len = list_len[2]
+    is_all_list_len_equal: bool = check_if_all_list_len_is_equal(kanji_list, pos_list, pos_translated_list)
 
-    if kanji_list_len != pos_list_len or kanji_list_len != pos_translated_list_len:
+    if not is_all_list_len_equal:
         raise ValueError("The length of kanji_list, pos_list, and pos_translated_list are not equal.")
 
     df_with_href_and_kanji['Romanji'] = df_with_href_and_kanji['Kanji'].apply(romanize_kanji)
@@ -95,8 +90,8 @@ def daily_news_scraper():
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H_%M_%S')
 
     logging.info('Convert DataFrame to Parquet')
-    # Convert the DataFrame to a Pyarrow Table and write it to a Parquet file
     parquet_file_path = f'{timestamp}.parquet'
+    # Convert the DataFrame to a Pyarrow Table and write it to a Parquet file
     table = pa.Table.from_pandas(filtered_df)
     pq.write_table(table, parquet_file_path)
 

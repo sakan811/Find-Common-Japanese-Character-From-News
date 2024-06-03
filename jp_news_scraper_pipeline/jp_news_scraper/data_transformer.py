@@ -28,6 +28,7 @@ def romanize_kanji(kanji: str) -> str:
     :param kanji: Kanji.
     :return: Romanized kanji.
     """
+    logging.info('Romanize kanji')
     return cutlet.Cutlet().romaji(kanji)
 
 

@@ -61,5 +61,40 @@ def get_excluded_jp_pos():
     }
 
 
+def check_if_all_list_len_is_equal(*args) -> bool:
+    """
+    Check if all list lengths are equal.
+    :param args: Target lists.
+    :return: True if all list lengths are equal, False otherwise.
+    """
+    logging.info("Check if all list lengths are equal.")
+
+    list_len: tuple = check_list_len(*args)
+    kanji_list_len = list_len[0]
+    logging.debug(f'Kanji list length: {kanji_list_len}')
+    pos_list_len = list_len[1]
+    logging.debug(f'Part of Speech list length: {pos_list_len}')
+    pos_translated_list_len = list_len[2]
+    logging.debug(f'Translated Part of Speech list length: {pos_translated_list_len}')
+
+    if kanji_list_len == pos_list_len == pos_translated_list_len:
+        logging.info("All list lengths are equal.")
+        return True
+    else:
+        logging.info("Not all list lengths are equal.")
+        return False
+
+
+def check_list_len(*args) -> tuple:
+    """
+    Calculate the length of the target list and return it as an integer.
+    :param args: Target lists.
+    :return: Length of the target list as Tuple.
+    """
+    logging.info(f"Checking length of target lists...")
+    lengths = [len(arg) for arg in args]
+    return tuple(lengths)
+
+
 if __name__ == '__main__':
     pass

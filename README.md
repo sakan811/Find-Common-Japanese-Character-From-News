@@ -42,3 +42,6 @@ Data was collected from 'https://www3.nhk.or.jp'
 
 [utils.py](jp_news_scraper_pipeline%2Fjp_news_scraper%2Futils.py)
 - Contain utility functions.
+
+## [automated_news_scraper.py](automated_news_scraper.py)
+Scrape data from NHK News daily, automated with GitHub Action.
