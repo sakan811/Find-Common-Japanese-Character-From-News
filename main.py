@@ -1,44 +1,37 @@
-from japan_news_scraper.configure_logging import configure_logging_with_file
-from japan_news_scraper.data_transformer import DataTransformer, clean_href_list, filter_out_non_jp_characters
-from japan_news_scraper.sqlite_functions import create_df_for_japan_news_table, migrate_to_sqlite, get_new_urls
-from japan_news_scraper.news_scraper import get_unique_hrefs, extract_text_from_href_list
+import logging
+
+import pandas as pd
+
+from jp_news_scraper_pipeline.configure_logging import configure_logging_with_file
+from jp_news_scraper_pipeline.pipeline import transform_data_to_df, extract_data, \
+    get_cleaned_url_list, load_to_sqlite, get_new_urls
 
 configure_logging_with_file('japan_news.log')
 
 
-def main(sqlite_db: str) -> None:
+def start_news_scraper_pipeline(sqlite_db: str) -> None:
     """
-    Main function to start a web-scraping process.
+    Start a pipeline for web-scraping Japanese news from NHK News.
     :param sqlite_db: SQLite database file path.
     :return: None.
     """
     base_url = 'https://www3.nhk.or.jp'
     initial_url = base_url + '/news/'
 
-    data_transformer = DataTransformer()
+    cleaned_url_list: list[str] = get_cleaned_url_list(initial_url)
 
-    initial_hrefs: list[str] = get_unique_hrefs(initial_url)
-    cleaned_href_list: list[str] = clean_href_list(initial_hrefs)
+    new_urls: list[str] = get_new_urls(cleaned_url_list, sqlite_db)
 
-    new_hrefs = get_new_urls(cleaned_href_list, sqlite_db)
+    if new_urls:
+        kanji_list, pos_list, pos_translated_list = extract_data(new_urls)
 
-    joined_text_list: list[str] = extract_text_from_href_list(new_hrefs)
+        dataframe: pd.DataFrame = transform_data_to_df(kanji_list, pos_list, pos_translated_list)
 
-    kanji_list: list[str] = data_transformer.extract_kanji(joined_text_list)
-
-    pos_list: list[str] = data_transformer.extract_pos(kanji_list)
-
-    pos_translated_list: list[str] = data_transformer.translate_pos(pos_list)
-
-    df = create_df_for_japan_news_table(kanji_list, pos_list, pos_translated_list)
-
-    filtered_df = data_transformer.filter_out_pos(df)
-
-    filtered_df = filter_out_non_jp_characters(filtered_df)
-
-    migrate_to_sqlite(filtered_df, sqlite_db)
+        load_to_sqlite(dataframe, sqlite_db)
+    else:
+        logging.warning("No new URL found. Stop the Process.")
 
 
 if __name__ == '__main__':
     sqlite_db = 'japan_news.db'
-    main(sqlite_db)
+    start_news_scraper_pipeline(sqlite_db)

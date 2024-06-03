@@ -12,3 +12,5 @@
 /*.pbit
 /migrate_files/
 /try_gcp.py
+/pipeline.py
+/ja

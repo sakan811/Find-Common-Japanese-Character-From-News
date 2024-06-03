@@ -23,9 +23,9 @@ from requests import Response
 
 def extract_href_tags(soup: BeautifulSoup) -> list[str]:
     """
-    Extract all href attributes from anchor tags.
+    Extract all href attributes from anchor tags to get a list of URLs.
     :param soup: BeautifulSoup object.
-    :return: List of href attributes.
+    :return: List of URLs.
     """
     logging.info(f'Extract href attributes with BeautifulSoup')
     href_tags = soup.find_all('a', href=True)
@@ -42,17 +42,17 @@ def parse_response_to_bs4(response: Response) -> BeautifulSoup:
     return BeautifulSoup(response.text, 'html.parser')
 
 
-def get_unique_hrefs(url: str) -> list[str]:
+def get_unique_urls(url: str) -> list[str]:
     """
-    Get a list of unique hrefs from the given URL.
+    Get a list of unique URLs from the given URL.
     :param url: URL to parse.
-    :return: List of unique hrefs.
+    :return: List of unique URLs.
     """
     logging.info(f'Get unique hrefs from {url}')
     response = requests.get(url)
     soup = parse_response_to_bs4(response)
-    href_list = extract_href_tags(soup)
-    return list(set(href_list))
+    url_list = extract_href_tags(soup)
+    return list(set(url_list))
 
 
 def find_all_news_articles(inner_soup) -> bs4.ResultSet:
@@ -79,7 +79,7 @@ def append_extracted_text(news_articles: bs4.ResultSet) -> list[str]:
     return news_article_list
 
 
-def extract_text_from_href_list(href_list: list[str]) -> list[str]:
+def extract_text_from_url_list(href_list: list[str]) -> list[str]:
     """
     Extract all text from the given href attributes.
     :param href_list: List of href attributes.

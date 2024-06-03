@@ -2,12 +2,12 @@ import sqlite3
 
 import pytest
 
-from main import main
+from main import start_news_scraper_pipeline
 
 
 def test_main():
     sqlite_db = 'japan_news_test.db'
-    main(sqlite_db)
+    start_news_scraper_pipeline(sqlite_db)
 
     with sqlite3.connect(sqlite_db) as conn:
         c = conn.cursor()

@@ -17,34 +17,39 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import pandas as pd
 
-from japan_news_scraper.data_transformer import DataTransformer, clean_href_list, filter_out_non_jp_characters, \
-    romanize_kanji
-from japan_news_scraper.news_scraper import get_unique_hrefs, extract_text_from_href_list
-from japan_news_scraper.sqlite_functions import add_timestamp_to_df
+from jp_news_scraper_pipeline.jp_news_scraper.data_extractor import extract_pos, translate_pos
+from jp_news_scraper_pipeline.jp_news_scraper.data_transformer import clean_url_list, filter_out_non_jp_characters, \
+    romanize_kanji, add_timestamp_to_df, filter_out_pos
+from jp_news_scraper_pipeline.jp_news_scraper.news_scraper import get_unique_urls, extract_text_from_url_list
+from jp_news_scraper_pipeline.configure_logging import configure_logging
+from jp_news_scraper_pipeline.jp_news_scraper.utils import get_tokenizer, get_tokenizer_mode
+from jp_news_scraper_pipeline.pipeline import check_list_len
+
+configure_logging()
 
 
-class GcpTransformer(DataTransformer):
-    def extract_kanji(self, dictionary: dict) -> pd.DataFrame:
-        """
-        Extract kanji from the text list.
-        :param dictionary: Dictionary where key is HREF and value is its text content.
-        :return: DataFrame with HREF as Source and extracted kanji as Kanji columns.
-        """
-        logging.info('Extract kanji from text list.')
-        kanji_data = []
+def extract_kanji_from_dict(dictionary: dict) -> pd.DataFrame:
+    """
+    Extract kanji from the text list.
+    :param dictionary: Dictionary where key is HREF and value is its text content.
+    :return: DataFrame with HREF as Source and extracted kanji as Kanji columns.
+    """
+    logging.info('Extract kanji from text list.')
+    kanji_data = []
+    tokenizer_obj = get_tokenizer()
+    mode = get_tokenizer_mode()
+    for href, text_list in dictionary.items():
+        for text in text_list:
+            kanji_list = [m.dictionary_form() for m in tokenizer_obj.tokenize(text, mode)]
+            if kanji_list:
+                kanji_data.extend([(href, kanji) for kanji in kanji_list])
 
-        for href, text_list in dictionary.items():
-            for text in text_list:
-                kanji_list = [m.dictionary_form() for m in self.tokenizer_obj.tokenize(text, self.mode)]
-                if kanji_list:
-                    kanji_data.extend([(href, kanji) for kanji in kanji_list])
+    if not kanji_data:
+        logging.warning('No kanji found.')
 
-        if not kanji_data:
-            logging.warning('No kanji found.')
-
-        # Create DataFrame from the kanji data
-        df = pd.DataFrame(kanji_data, columns=['Source', 'Kanji'])
-        return df
+    logging.info("Create DataFrame from the kanji data")
+    df = pd.DataFrame(kanji_data, columns=['Source', 'Kanji'])
+    return df
 
 
 def daily_news_scraper():
@@ -53,24 +58,29 @@ def daily_news_scraper():
     base_url = 'https://www3.nhk.or.jp'
     initial_url = base_url + '/news/'
 
-    data_transformer = DataTransformer()
-    gcp_transformer = GcpTransformer()
-
-    initial_hrefs = get_unique_hrefs(initial_url)
+    initial_hrefs = get_unique_urls(initial_url)
     logging.info(f"Initial hrefs retrieved: {len(initial_hrefs)}")
 
-    cleaned_href_list = clean_href_list(initial_hrefs)
+    cleaned_href_list = clean_url_list(initial_hrefs)
     logging.info(f"Cleaned href list: {len(cleaned_href_list)}")
 
-    joined_text_list = extract_text_from_href_list(cleaned_href_list)
+    joined_text_list = extract_text_from_url_list(cleaned_href_list)
     logging.info("Text extracted from hrefs")
 
     dictionary = dict(zip(cleaned_href_list, joined_text_list))
 
-    df_with_href_and_kanji = gcp_transformer.extract_kanji(dictionary)
+    df_with_href_and_kanji = extract_kanji_from_dict(dictionary)
     kanji_list = df_with_href_and_kanji['Kanji'].tolist()
-    pos_list = data_transformer.extract_pos(kanji_list)
-    pos_translated_list = data_transformer.translate_pos(pos_list)
+    pos_list = extract_pos(kanji_list)
+    pos_translated_list = translate_pos(pos_list)
+
+    list_len: tuple = check_list_len(kanji_list, pos_list, pos_translated_list)
+    kanji_list_len = list_len[0]
+    pos_list_len = list_len[1]
+    pos_translated_list_len = list_len[2]
+
+    if kanji_list_len != pos_list_len or kanji_list_len != pos_translated_list_len:
+        raise ValueError("The length of kanji_list, pos_list, and pos_translated_list are not equal.")
 
     df_with_href_and_kanji['Romanji'] = df_with_href_and_kanji['Kanji'].apply(romanize_kanji)
     logging.info('Add PartOfSpeech Column')
@@ -79,23 +89,15 @@ def daily_news_scraper():
     df_with_href_and_kanji['PartOfSpeechEnglish'] = pos_translated_list
     add_timestamp_to_df(df_with_href_and_kanji)
 
-    filtered_df = data_transformer.filter_out_pos(df_with_href_and_kanji)
+    filtered_df = filter_out_pos(df_with_href_and_kanji)
     filtered_df = filter_out_non_jp_characters(filtered_df)
 
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H_%M_%S')
 
-    # Convert the filtered DataFrame to CSV
-    csv_file_path = f'{timestamp}.csv'
-    filtered_df.to_csv(csv_file_path, index=False)
-
     logging.info('Convert DataFrame to Parquet')
-
-    # Read the CSV file back into a DataFrame
-    df = pd.read_csv(csv_file_path)
-
     # Convert the DataFrame to a Pyarrow Table and write it to a Parquet file
     parquet_file_path = f'{timestamp}.parquet'
-    table = pa.Table.from_pandas(df)
+    table = pa.Table.from_pandas(filtered_df)
     pq.write_table(table, parquet_file_path)
 
 
