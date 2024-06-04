@@ -77,6 +77,7 @@ def daily_news_scraper():
     if not is_all_list_len_equal:
         raise ValueError("The length of kanji_list, pos_list, and pos_translated_list are not equal.")
 
+    logging.info('Romanizing Kanji...')
     df_with_href_and_kanji['Romanji'] = df_with_href_and_kanji['Kanji'].apply(romanize_kanji)
     logging.info('Add PartOfSpeech Column')
     df_with_href_and_kanji['PartOfSpeech'] = pos_list
