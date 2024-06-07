@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
     # SQLite database is needed.
     # Adjust the database name as needed.
-    if args.sset_db_name:
+    if args.set_db_name:
         sqlite_db = args.set_db_name
     else:
         sqlite_db = 'japan_news.db'
