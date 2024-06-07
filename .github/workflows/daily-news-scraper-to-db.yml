@@ -42,7 +42,7 @@ jobs:
 
     - name: Scrape News
       run: |
-        python main.py --to_sqlite=True --set_db_name='japan_news_auto.db'
+        python main.py --to_sqlite=True --name_db_by_time=True
 
     - id: 'auth'
       uses: 'google-github-actions/auth@v2'
