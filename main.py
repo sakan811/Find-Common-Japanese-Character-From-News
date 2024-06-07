@@ -1,3 +1,5 @@
+import argparse
+import datetime
 import logging
 
 import pandas as pd
@@ -8,11 +10,17 @@ from jp_news_scraper_pipeline.pipeline import transform_data_to_df, extract_data
 
 configure_logging_with_file('japan_news.log')
 
+parser = argparse.ArgumentParser(description='Parser that control which kind of scraper to use.')
+parser.add_argument('--to_sqlite', type=bool, default=False, help='Save data to SQLite database.')
+args = parser.parse_args()
 
-def start_news_scraper_pipeline(sqlite_db: str) -> None:
+
+def start_news_scraper_pipeline(sqlite_db: str, to_sqlite: bool = False) -> None:
     """
     Start a pipeline for web-scraping Japanese news from NHK News.
     :param sqlite_db: SQLite database file path.
+    :param to_sqlite: If True, load data to SQLite database, else save to Parquet.
+                    Default is False.
     :return: None.
     """
     base_url = 'https://www3.nhk.or.jp'
@@ -27,11 +35,23 @@ def start_news_scraper_pipeline(sqlite_db: str) -> None:
 
         dataframe: pd.DataFrame = transform_data_to_df(kanji_list, pos_list, pos_translated_list)
 
-        load_to_sqlite(dataframe, sqlite_db)
+        if to_sqlite:
+            load_to_sqlite(dataframe, sqlite_db)
+        else:
+            timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H_%M_%S')
+
+            logging.info('Convert DataFrame to CSV')
+            csv_file_path = f'jp_words_from_nhk_news_{timestamp}.csv'
+            dataframe.to_csv(csv_file_path, index=False)
     else:
         logging.warning("No new URL found. Stop the Process.")
 
 
 if __name__ == '__main__':
+    # SQLite database is needed.
+    # Adjust the database name as needed.
     sqlite_db = 'japan_news.db'
-    start_news_scraper_pipeline(sqlite_db)
+    if args.to_sqlite:
+        start_news_scraper_pipeline(sqlite_db, to_sqlite=True)
+    else:
+        start_news_scraper_pipeline(sqlite_db)

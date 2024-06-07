@@ -23,8 +23,8 @@ from jp_news_scraper_pipeline.jp_news_scraper.data_extractor import extract_pos,
 from jp_news_scraper_pipeline.jp_news_scraper.data_transformer import filter_out_non_jp_characters, \
     romanize_kanji, add_timestamp_to_df, filter_out_pos
 from jp_news_scraper_pipeline.jp_news_scraper.news_scraper import extract_text_from_url_list
-from jp_news_scraper_pipeline.jp_news_scraper.utils import get_tokenizer, get_tokenizer_mode, \
-    check_if_all_list_len_is_equal
+from jp_news_scraper_pipeline.jp_news_scraper.utils import check_if_all_list_len_is_equal, get_tokenizer, \
+    get_tokenizer_mode
 from jp_news_scraper_pipeline.pipeline import get_cleaned_url_list
 
 configure_logging()
@@ -54,8 +54,8 @@ def extract_kanji_from_dict(dictionary: dict) -> pd.DataFrame:
     return df
 
 
-def daily_news_scraper():
-    logging.info("Automated Scraper Function started")
+def start_daily_news_scraper():
+    logging.info("Automated Scraper started")
 
     base_url = 'https://www3.nhk.or.jp'
     initial_url = base_url + '/news/'
@@ -65,9 +65,9 @@ def daily_news_scraper():
     joined_text_list = extract_text_from_url_list(cleaned_url_list)
     logging.info("Text extracted from hrefs")
 
-    dictionary = dict(zip(cleaned_url_list, joined_text_list))
+    source_and_text_dict = dict(zip(cleaned_url_list, joined_text_list))
 
-    df_with_href_and_kanji = extract_kanji_from_dict(dictionary)
+    df_with_href_and_kanji = extract_kanji_from_dict(source_and_text_dict)
     kanji_list = df_with_href_and_kanji['Kanji'].tolist()
     pos_list = extract_pos(kanji_list)
     pos_translated_list = translate_pos(pos_list)
@@ -92,9 +92,8 @@ def daily_news_scraper():
 
     logging.info('Convert DataFrame to Parquet')
     parquet_file_path = f'{timestamp}.parquet'
-    # Convert the DataFrame to a Pyarrow Table and write it to a Parquet file
     table = pa.Table.from_pandas(filtered_df)
     pq.write_table(table, parquet_file_path)
 
 
-daily_news_scraper()
+start_daily_news_scraper()

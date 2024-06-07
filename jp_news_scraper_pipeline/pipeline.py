@@ -10,7 +10,7 @@ from jp_news_scraper_pipeline.jp_news_scraper.data_transformer import create_df_
 from jp_news_scraper_pipeline.jp_news_scraper.news_scraper import extract_text_from_url_list, get_unique_urls
 from jp_news_scraper_pipeline.jp_news_scraper.sqlite_functions import create_japan_news_table, create_news_url_table, \
     fetch_exist_url_from_db
-from jp_news_scraper_pipeline.jp_news_scraper.utils import check_list_len, check_if_all_list_len_is_equal
+from jp_news_scraper_pipeline.jp_news_scraper.utils import check_if_all_list_len_is_equal
 
 
 def get_cleaned_url_list(initial_url):
@@ -56,14 +56,14 @@ def transform_data_to_df(kanji_list, pos_list, pos_translated_list) -> pd.DataFr
     return filtered_df
 
 
-def extract_data(new_url) -> tuple[list[str], list[str], list[str]]:
+def extract_data(new_urls: list[str]) -> tuple[list[str], list[str], list[str]]:
     """
     Extract the desired data from the new URL list.
-    :param new_url: New URL list.
+    :param new_urls: New URL list.
     :return: Tuple of a Kanji list, Part of Speech list, and English translation of Part of Speech list.
     """
     logging.info('Extracting data from new URLs list...')
-    joined_text_list: list[str] = extract_text_from_url_list(new_url)
+    joined_text_list: list[str] = extract_text_from_url_list(new_urls)
     kanji_list: list[str] = extract_kanji(joined_text_list)
     pos_list: list[str] = extract_pos(kanji_list)
     pos_translated_list: list[str] = translate_pos(pos_list)
