@@ -19,9 +19,6 @@ def set_arg_parsers() -> Namespace:
     """
     parser = argparse.ArgumentParser(description='Parser that control which kind of scraper to use.')
     parser.add_argument('--to_sqlite', type=bool, default=False, help='Save data to SQLite database.')
-    parser.add_argument('--name_db_by_time', type=bool, default=False,
-                        help='Name the database by time '
-                             '(Use when the script is scheduled and executed with GitHub Action ).')
     return parser.parse_args()
 
 
@@ -64,11 +61,6 @@ if __name__ == '__main__':
     # Adjust the database name as needed.
     sqlite_db = 'japan_news.db'
 
-    if args.name_db_by_time:
-        hour = datetime.datetime.now().strftime('%H')
-        sqlite_db = f'auto_japan_news_{hour}.db'
-    else:
-        sqlite_db = sqlite_db
     if args.to_sqlite:
         start_news_scraper_pipeline(sqlite_db, to_sqlite=True)
     else:
