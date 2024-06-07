@@ -60,10 +60,12 @@ if __name__ == '__main__':
 
     # SQLite database is needed.
     # Adjust the database name as needed.
+    sqlite_db = 'japan_news.db'
+
     if args.set_db_name:
         sqlite_db = args.set_db_name
     else:
-        sqlite_db = 'japan_news.db'
+        sqlite_db = sqlite_db
     if args.to_sqlite:
         start_news_scraper_pipeline(sqlite_db, to_sqlite=True)
     else:
