@@ -19,6 +19,7 @@ def set_arg_parsers() -> Namespace:
     """
     parser = argparse.ArgumentParser(description='Parser that control which kind of scraper to use.')
     parser.add_argument('--to_sqlite', type=bool, default=False, help='Save data to SQLite database.')
+    parser.add_argument('--set_db_name', type=str, default=False, help='Set database\'s name.')
     return parser.parse_args()
 
 
@@ -59,7 +60,10 @@ if __name__ == '__main__':
 
     # SQLite database is needed.
     # Adjust the database name as needed.
-    sqlite_db = 'japan_news.db'
+    if args.sset_db_name:
+        sqlite_db = args.set_db_name
+    else:
+        sqlite_db = 'japan_news.db'
     if args.to_sqlite:
         start_news_scraper_pipeline(sqlite_db, to_sqlite=True)
     else:
