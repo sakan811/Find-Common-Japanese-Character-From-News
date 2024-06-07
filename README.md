@@ -16,7 +16,6 @@ Data was collected from 'https://www3.nhk.or.jp'
 - Adjust the SQLite database name as needed
     ```
     sqlite_db = 'japan_news.db' # adjust as needed
-    start_news_scraper_pipeline(sqlite_db)
     ```
 - Run the script
 
