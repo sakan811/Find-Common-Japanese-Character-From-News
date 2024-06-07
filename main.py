@@ -1,6 +1,7 @@
 import argparse
 import datetime
 import logging
+from argparse import Namespace
 
 import pandas as pd
 
@@ -10,9 +11,15 @@ from jp_news_scraper_pipeline.pipeline import transform_data_to_df, extract_data
 
 configure_logging_with_file('japan_news.log')
 
-parser = argparse.ArgumentParser(description='Parser that control which kind of scraper to use.')
-parser.add_argument('--to_sqlite', type=bool, default=False, help='Save data to SQLite database.')
-args = parser.parse_args()
+
+def set_arg_parsers() -> Namespace:
+    """
+    Set command line arguments.
+    :return: Namespace
+    """
+    parser = argparse.ArgumentParser(description='Parser that control which kind of scraper to use.')
+    parser.add_argument('--to_sqlite', type=bool, default=False, help='Save data to SQLite database.')
+    return parser.parse_args()
 
 
 def start_news_scraper_pipeline(sqlite_db: str, to_sqlite: bool = False) -> None:
@@ -48,6 +55,8 @@ def start_news_scraper_pipeline(sqlite_db: str, to_sqlite: bool = False) -> None
 
 
 if __name__ == '__main__':
+    args = set_arg_parsers()
+
     # SQLite database is needed.
     # Adjust the database name as needed.
     sqlite_db = 'japan_news.db'
