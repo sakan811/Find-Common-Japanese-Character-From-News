@@ -1,6 +1,8 @@
-# Common Japanese Words in News
+# Common Japanese Morphemes in News
 
-Showcase visualizations and code base about the common Japanese words that appear in news.
+Showcase visualizations and code base about the common Japanese morphemes that appear in news.
+
+Morphemes are the smallest units of meaning in a language.
 
 Data was collected from 'https://www3.nhk.or.jp'
 
