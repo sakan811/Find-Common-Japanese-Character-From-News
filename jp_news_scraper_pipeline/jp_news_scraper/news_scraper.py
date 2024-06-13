@@ -16,12 +16,11 @@
 import bs4
 import requests
 from bs4 import BeautifulSoup
-
 from requests import Response
 
 from jp_news_scraper_pipeline.configure_logging import configure_logging_with_file
 
-logger = configure_logging_with_file('main.log', 'main')
+logger = configure_logging_with_file(log_file='main.log', logger_name='main')
 
 
 def extract_href_tags(soup: BeautifulSoup) -> list[str]:

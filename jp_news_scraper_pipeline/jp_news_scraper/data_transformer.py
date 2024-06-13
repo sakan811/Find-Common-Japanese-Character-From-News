@@ -18,11 +18,12 @@ import sqlite3
 import cutlet
 import pandas as pd
 
+
 from jp_news_scraper_pipeline.configure_logging import configure_logging_with_file
 from jp_news_scraper_pipeline.jp_news_scraper.utils import get_excluded_jp_pos
 
 
-logger = configure_logging_with_file('main.log', 'main')
+logger = configure_logging_with_file(log_file='main.log', logger_name='main')
 
 
 def romanize_kanji(kanji: str) -> str:

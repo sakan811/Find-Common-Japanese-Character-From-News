@@ -6,11 +6,11 @@ from argparse import Namespace
 import pandas as pd
 from prefect import flow, get_run_logger
 
-from jp_news_scraper_pipeline.configure_logging import configure_logging_with_file, configure_logging
+from jp_news_scraper_pipeline.configure_logging import configure_logging_with_file
 from jp_news_scraper_pipeline.pipeline import transform_data_to_df, extract_data, \
     get_cleaned_url_list, load_to_sqlite, get_new_urls
 
-logger = configure_logging_with_file('main.log', 'main')
+logger = configure_logging_with_file(log_file='main.log', logger_name='main')
 
 # Define the configuration command
 config_command = [
@@ -34,7 +34,7 @@ def set_arg_parsers() -> Namespace:
     return parser.parse_args()
 
 
-@flow(name='Japan News Scraper Pipeline', log_prints=True)
+@flow(name='Japan-News-Scraper-Pipeline', log_prints=True)
 def start_news_scraper_pipeline(sqlite_db: str, to_sqlite: bool = False) -> None:
     """
     Start a pipeline for web-scraping Japanese news from NHK News.
@@ -80,3 +80,4 @@ if __name__ == '__main__':
         start_news_scraper_pipeline(sqlite_db, to_sqlite=True)
     else:
         start_news_scraper_pipeline(sqlite_db)
+

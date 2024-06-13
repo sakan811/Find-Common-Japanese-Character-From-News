@@ -6,6 +6,8 @@ Morphemes are the smallest units of meaning in a language.
 
 Data was collected from 'https://www3.nhk.or.jp'
 
+Data collecting period: 25th May 2024 - 13th June 2024
+
 ## Status
 [![CodeQL](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml)    
 [![Scraper Test](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/scraper-test.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/scraper-test.yml)  
@@ -24,6 +26,10 @@ Data was collected from 'https://www3.nhk.or.jp'
 ### Use Prefect dashboard to monitor the pipeline
 - Run ```prefect server start``` in the command line terminal.
 - Click the local server link to see the Prefect's dashboard.
+  - The link is usually http://127.0.0.1:4200
+- Run ```main.py```.
+  - You can monitor only the flows that are executed while the Prefect server is running. 
+    - This includes flows you manually run after starting the Prefect server.
 
 ### [jp_news_scraper_pipeline](jp_news_scraper_pipeline) Package
 [pipeline.py](japan_news_scraper%2Fpipeline.py)

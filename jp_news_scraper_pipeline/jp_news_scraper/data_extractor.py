@@ -2,7 +2,7 @@ from jp_news_scraper_pipeline.configure_logging import configure_logging_with_fi
 from jp_news_scraper_pipeline.jp_news_scraper.utils import get_jp_pos_dict, get_tokenizer, get_tokenizer_mode
 
 
-logger = configure_logging_with_file('main.log', 'main')
+logger = configure_logging_with_file(log_file='main.log', logger_name='main')
 
 
 def extract_kanji(joined_text_list: list[str]) -> list[str]:

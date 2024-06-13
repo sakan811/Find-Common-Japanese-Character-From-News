@@ -26,7 +26,7 @@ from jp_news_scraper_pipeline.jp_news_scraper.utils import check_if_all_list_len
     get_tokenizer_mode
 from jp_news_scraper_pipeline.pipeline import get_cleaned_url_list
 
-logger = configure_logging('automated_news_scraper')
+logger = configure_logging(logger_name='automated_news_scraper')
 
 
 def extract_kanji_from_dict(dictionary: dict) -> pd.DataFrame:
