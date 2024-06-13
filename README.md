@@ -24,12 +24,33 @@ Data collecting period: 25th May 2024 - 13th June 2024
 - Run the script
 
 ### Use Prefect dashboard to monitor the pipeline
-- Run ```prefect server start``` in the command line terminal.
+- Run ```prefect server start``` in the command line terminal to start a local Prefect server.
 - Click the local server link to see the Prefect's dashboard.
   - The link is usually http://127.0.0.1:4200
 - Run ```main.py```.
-  - You can monitor only the flows that are executed while the Prefect server is running. 
-    - This includes flows you manually run after starting the Prefect server.
+  - You can **monitor only** the **flows** that are **executed** while the **local Prefect server** is **running**. 
+    - This includes flows you manually run after starting the local Prefect server.
+- For more information, please refer to https://docs.prefect.io/2.10.21/host/
+
+
+### Set Prefect scheduler
+- Run ```prefect server start``` in the command line terminal.
+- Go to [scheduler.py](scheduler.py)
+- Set the cron parameter as needed.
+  ```
+  if __name__ == '__main__':
+      start_news_scraper_pipeline.serve(
+          name='Japan-News-Scraper-Pipeline-Scheduler',
+          parameters={"sqlite_db": "japan_news.db", "to_sqlite": True},
+          cron='30 14 * * *')  # Adjust the cron parameter as needed
+  ```
+  - It's set to schedule every day at 9:30 PM as a default.
+- Run the script.
+- Navigate the Prefect dashboard.
+- Navigate the Deployment which you can see the name of the deployed scheduler.
+- You **need** to **keep** the **local Prefect server** and ```scheduler.py``` **running** for the **scheduler** to be **online**.
+- For more information, please refer to https://www.prefect.io/blog/schedule-your-code-quickly-with-flow-dot-serve 
+
 
 ### [jp_news_scraper_pipeline](jp_news_scraper_pipeline) Package
 [pipeline.py](japan_news_scraper%2Fpipeline.py)

@@ -21,7 +21,10 @@ config_command = [
 ]
 
 # Run the configuration command
-subprocess.run(config_command, check=True)
+try:
+    subprocess.run(config_command, check=True)
+except subprocess.CalledProcessError as e:
+    logger.error(f"Error running command: {e}")
 
 
 def set_arg_parsers() -> Namespace:
@@ -80,4 +83,6 @@ if __name__ == '__main__':
         start_news_scraper_pipeline(sqlite_db, to_sqlite=True)
     else:
         start_news_scraper_pipeline(sqlite_db)
+
+
 
