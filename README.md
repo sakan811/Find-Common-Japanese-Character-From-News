@@ -30,7 +30,7 @@ Data collecting period: 25th May 2024 - 13th June 2024
 - Run ```main.py```.
   - You can **monitor only** the **flows** that are **executed** while the **local Prefect server** is **running**. 
     - This includes flows you manually run after starting the local Prefect server.
-- For more information, please refer to https://docs.prefect.io/2.10.21/host/
+- For more information, please refer to https://docs.prefect.io/latest/guides/host/
 
 
 ### Set Prefect scheduler
@@ -49,7 +49,7 @@ Data collecting period: 25th May 2024 - 13th June 2024
 - Navigate the Prefect dashboard.
 - Navigate the Deployment which you can see the name of the deployed scheduler.
 - You **need** to **keep** the **local Prefect server** and ```scheduler.py``` **running** for the **scheduler** to be **online**.
-- For more information, please refer to https://www.prefect.io/blog/schedule-your-code-quickly-with-flow-dot-serve 
+- For more information, please refer to https://docs.prefect.io/latest/tutorial/deployments/
 
 
 ### [jp_news_scraper_pipeline](jp_news_scraper_pipeline) Package
