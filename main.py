@@ -1,15 +1,27 @@
 import argparse
 import datetime
-import logging
+import subprocess
 from argparse import Namespace
 
 import pandas as pd
+from prefect import flow, get_run_logger
 
-from jp_news_scraper_pipeline.configure_logging import configure_logging_with_file
+from jp_news_scraper_pipeline.configure_logging import configure_logging_with_file, configure_logging
 from jp_news_scraper_pipeline.pipeline import transform_data_to_df, extract_data, \
     get_cleaned_url_list, load_to_sqlite, get_new_urls
 
-configure_logging_with_file('japan_news.log')
+logger = configure_logging_with_file('main.log', 'main')
+
+# Define the configuration command
+config_command = [
+    "prefect",
+    "config",
+    "set",
+    "PREFECT_LOGGING_SETTINGS_PATH=new_prefect_logging.yml"
+]
+
+# Run the configuration command
+subprocess.run(config_command, check=True)
 
 
 def set_arg_parsers() -> Namespace:
@@ -22,6 +34,7 @@ def set_arg_parsers() -> Namespace:
     return parser.parse_args()
 
 
+@flow(name='Japan News Scraper Pipeline', log_prints=True)
 def start_news_scraper_pipeline(sqlite_db: str, to_sqlite: bool = False) -> None:
     """
     Start a pipeline for web-scraping Japanese news from NHK News.
@@ -30,6 +43,8 @@ def start_news_scraper_pipeline(sqlite_db: str, to_sqlite: bool = False) -> None
                     Default is False.
     :return: None.
     """
+    logger = get_run_logger()
+
     base_url = 'https://www3.nhk.or.jp'
     initial_url = base_url + '/news/'
 
@@ -47,11 +62,11 @@ def start_news_scraper_pipeline(sqlite_db: str, to_sqlite: bool = False) -> None
         else:
             timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H_%M_%S')
 
-            logging.info('Convert DataFrame to CSV')
+            logger.info('Convert DataFrame to CSV')
             csv_file_path = f'jp_words_from_nhk_news_{timestamp}.csv'
             dataframe.to_csv(csv_file_path, index=False)
     else:
-        logging.warning("No new URL found. Stop the Process.")
+        logger.warning("No new URL found. Stop the Process.")
 
 
 if __name__ == '__main__':

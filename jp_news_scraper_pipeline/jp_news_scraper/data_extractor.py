@@ -1,6 +1,8 @@
-import logging
-
+from jp_news_scraper_pipeline.configure_logging import configure_logging_with_file
 from jp_news_scraper_pipeline.jp_news_scraper.utils import get_jp_pos_dict, get_tokenizer, get_tokenizer_mode
+
+
+logger = configure_logging_with_file('main.log', 'main')
 
 
 def extract_kanji(joined_text_list: list[str]) -> list[str]:
@@ -9,7 +11,7 @@ def extract_kanji(joined_text_list: list[str]) -> list[str]:
     :param joined_text_list: Text list.
     :return: List of kanji.
     """
-    logging.info('Extract kanji from text list.')
+    logger.info('Extract kanji from text list.')
     words = []
     tokenizer_obj = get_tokenizer()
     mode = get_tokenizer_mode()
@@ -17,7 +19,7 @@ def extract_kanji(joined_text_list: list[str]) -> list[str]:
         words = [m.dictionary_form() for m in tokenizer_obj.tokenize(text, mode)]
 
     if not words:
-        logging.warning('No kanji found.')
+        logger.warning('No kanji found.')
 
     return words
 
@@ -28,7 +30,7 @@ def extract_pos(kanji_list: list[str]) -> list[str]:
     :param kanji_list: Kanji list.
     :return: List of Part of Speech.
     """
-    logging.info('Extract Part of Speech from the Kanji list.')
+    logger.info('Extract Part of Speech from the Kanji list.')
     part_of_speech_list = []
     tokenizer_obj = get_tokenizer()
     mode = get_tokenizer_mode()
@@ -46,7 +48,7 @@ def translate_pos(part_of_speech_list: list[str]) -> list[str]:
     :param part_of_speech_list: Part of Speech list.
     :return: Translated Part of Speech list.
     """
-    logging.info('Translate Japanese Part of Speech to English.')
+    logger.info('Translate Japanese Part of Speech to English.')
     pos_translated_list = []
     japanese_pos_dict = get_jp_pos_dict()
     for pos in part_of_speech_list:

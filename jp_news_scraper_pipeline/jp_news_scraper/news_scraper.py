@@ -16,9 +16,12 @@
 import bs4
 import requests
 from bs4 import BeautifulSoup
-import logging
 
 from requests import Response
+
+from jp_news_scraper_pipeline.configure_logging import configure_logging_with_file
+
+logger = configure_logging_with_file('main.log', 'main')
 
 
 def extract_href_tags(soup: BeautifulSoup) -> list[str]:
@@ -27,7 +30,7 @@ def extract_href_tags(soup: BeautifulSoup) -> list[str]:
     :param soup: BeautifulSoup object.
     :return: List of URLs.
     """
-    logging.info(f'Extract href attributes with BeautifulSoup')
+    logger.info(f'Extract href attributes with BeautifulSoup')
     href_tags = soup.find_all('a', href=True)
     return [tag['href'] for tag in href_tags]
 
@@ -38,7 +41,7 @@ def parse_response_to_bs4(response: Response) -> BeautifulSoup:
     :param response: Response from the URL.
     :return: BeautifulSoup object.
     """
-    logging.info(f'Parsing a response to BeautifulSoup')
+    logger.info(f'Parsing a response to BeautifulSoup')
     return BeautifulSoup(response.text, 'html.parser')
 
 
@@ -48,7 +51,7 @@ def get_unique_urls(url: str) -> list[str]:
     :param url: URL to parse.
     :return: List of unique URLs.
     """
-    logging.info(f'Get unique hrefs from {url}')
+    logger.info(f'Get unique hrefs from {url}')
     response = requests.get(url)
     soup = parse_response_to_bs4(response)
     url_list = extract_href_tags(soup)
@@ -61,7 +64,7 @@ def find_all_news_articles(inner_soup) -> bs4.ResultSet:
     :param inner_soup: BeautifulSoup object.
     :return: Set of the news articles found by BeautifulSoup.
     """
-    logging.info('Find all news articles\' texts from section tags')
+    logger.info('Find all news articles\' texts from section tags')
     news_articles: bs4.ResultSet = inner_soup.find_all('section', class_='content--detail-main')
     return news_articles
 
@@ -72,7 +75,7 @@ def append_extracted_text(news_articles: bs4.ResultSet) -> list[str]:
     :param news_articles: Scraped news articles.
     :return: List of extracted texts from the scraped news articles.
     """
-    logging.info('Append the extracted text from the scraped news articles to a list')
+    logger.info('Append the extracted text from the scraped news articles to a list')
     news_article_list = []
     for news_article in news_articles:
         news_article_list.append(news_article.text)
@@ -85,7 +88,7 @@ def extract_text_from_url_list(href_list: list[str]) -> list[str]:
     :param href_list: List of href attributes.
     :return: List of extracted texts.
     """
-    logging.info('Extract news articles\' texts from a href list')
+    logger.info('Extract news articles\' texts from a href list')
     text_list = []
     for href in href_list:
         url = 'https://www3.nhk.or.jp' + href
@@ -99,6 +102,6 @@ def extract_text_from_url_list(href_list: list[str]) -> list[str]:
         text_list += append_extracted_text(news_articles)
 
     if not text_list:
-        logging.warning('No text extracted from the news articles')
+        logger.warning('No text extracted from the news articles')
 
     return text_list

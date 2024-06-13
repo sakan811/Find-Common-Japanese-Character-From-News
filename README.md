@@ -21,6 +21,10 @@ Data was collected from 'https://www3.nhk.or.jp'
     ```
 - Run the script
 
+### Use Prefect dashboard to monitor the pipeline
+- Run ```prefect server start``` in the command line terminal.
+- Click the local server link to see the Prefect's dashboard.
+
 ### [jp_news_scraper_pipeline](jp_news_scraper_pipeline) Package
 [pipeline.py](japan_news_scraper%2Fpipeline.py)
 - Contain web-scraping pipeline's functions.

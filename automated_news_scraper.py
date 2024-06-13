@@ -12,7 +12,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 import datetime
-import logging
 
 import pandas as pd
 import pyarrow as pa
@@ -27,7 +26,7 @@ from jp_news_scraper_pipeline.jp_news_scraper.utils import check_if_all_list_len
     get_tokenizer_mode
 from jp_news_scraper_pipeline.pipeline import get_cleaned_url_list
 
-configure_logging()
+logger = configure_logging('automated_news_scraper')
 
 
 def extract_kanji_from_dict(dictionary: dict) -> pd.DataFrame:
@@ -36,7 +35,7 @@ def extract_kanji_from_dict(dictionary: dict) -> pd.DataFrame:
     :param dictionary: Dictionary where key is HREF and value is its text content.
     :return: DataFrame with HREF as Source and extracted kanji as Kanji columns.
     """
-    logging.info('Extract kanji from text list.')
+    logger.info('Extract kanji from text list.')
     kanji_data = []
     tokenizer_obj = get_tokenizer()
     mode = get_tokenizer_mode()
@@ -47,15 +46,15 @@ def extract_kanji_from_dict(dictionary: dict) -> pd.DataFrame:
                 kanji_data.extend([(href, kanji) for kanji in kanji_list])
 
     if not kanji_data:
-        logging.warning('No kanji found.')
+        logger.warning('No kanji found.')
 
-    logging.info("Create DataFrame from the kanji data")
+    logger.info("Create DataFrame from the kanji data")
     df = pd.DataFrame(kanji_data, columns=['Source', 'Kanji'])
     return df
 
 
 def start_daily_news_scraper():
-    logging.info("Automated Scraper started")
+    logger.info("Automated Scraper started")
 
     base_url = 'https://www3.nhk.or.jp'
     initial_url = base_url + '/news/'
@@ -63,7 +62,7 @@ def start_daily_news_scraper():
     cleaned_url_list: list[str] = get_cleaned_url_list(initial_url)
 
     joined_text_list = extract_text_from_url_list(cleaned_url_list)
-    logging.info("Text extracted from hrefs")
+    logger.info("Text extracted from hrefs")
 
     source_and_text_dict = dict(zip(cleaned_url_list, joined_text_list))
 
@@ -77,11 +76,11 @@ def start_daily_news_scraper():
     if not is_all_list_len_equal:
         raise ValueError("The length of kanji_list, pos_list, and pos_translated_list are not equal.")
 
-    logging.info('Romanizing Kanji...')
+    logger.info('Romanizing Kanji...')
     df_with_href_and_kanji['Romanji'] = df_with_href_and_kanji['Kanji'].apply(romanize_kanji)
-    logging.info('Add PartOfSpeech Column')
+    logger.info('Add PartOfSpeech Column')
     df_with_href_and_kanji['PartOfSpeech'] = pos_list
-    logging.info('Add PartOfSpeechEnglish Column')
+    logger.info('Add PartOfSpeechEnglish Column')
     df_with_href_and_kanji['PartOfSpeechEnglish'] = pos_translated_list
     add_timestamp_to_df(df_with_href_and_kanji)
 
@@ -90,7 +89,7 @@ def start_daily_news_scraper():
 
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H_%M_%S')
 
-    logging.info('Convert DataFrame to Parquet')
+    logger.info('Convert DataFrame to Parquet')
     parquet_file_path = f'{timestamp}.parquet'
     table = pa.Table.from_pandas(filtered_df)
     pq.write_table(table, parquet_file_path)

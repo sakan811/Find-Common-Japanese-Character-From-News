@@ -12,11 +12,13 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-
-import logging
 import sqlite3
 
 import pandas as pd
+
+from jp_news_scraper_pipeline.configure_logging import configure_logging_with_file
+
+logger = configure_logging_with_file('main.log', 'main')
 
 
 def create_japan_news_table(conn: sqlite3.Connection) -> None:
@@ -44,7 +46,7 @@ def create_news_url_table(conn: sqlite3.Connection) -> None:
     :param conn: Sqlite3 connection.
     :return: None
     """
-    logging.info('Creating NewsUrls table if not exist')
+    logger.info('Creating NewsUrls table if not exist')
     query = '''
             CREATE TABLE IF NOT EXISTS NewsUrls (
             Url TEXT NOT NULL PRIMARY KEY,
@@ -60,7 +62,7 @@ def fetch_exist_url_from_db(conn: sqlite3.Connection) -> list[str]:
     :param conn: SQLite 3 connection.
     :return: URL list.
     """
-    logging.info('Fetch existing URLs from the database')
+    logger.info('Fetch existing URLs from the database')
     existing_urls_query = 'SELECT Url FROM NewsUrls'
     existing_urls = pd.read_sql_query(existing_urls_query, conn)['Url'].tolist()
     return existing_urls

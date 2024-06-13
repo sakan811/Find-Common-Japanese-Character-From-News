@@ -2,7 +2,11 @@ import sqlite3
 
 import pytest
 
+from jp_news_scraper_pipeline.configure_logging import configure_logging_with_file
 from main import start_news_scraper_pipeline
+
+
+logger = configure_logging_with_file('test.log', 'test')
 
 
 def test_main_process():
