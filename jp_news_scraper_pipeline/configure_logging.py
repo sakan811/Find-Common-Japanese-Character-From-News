@@ -41,13 +41,16 @@ def configure_logging(logger: logging.Logger = None, logger_name: str = 'root') 
 def configure_logging_with_file(
         log_file: str,
         logger: logging.Logger = None,
-        logger_name: str = 'root') -> None | logging.Logger:
+        logger_name: str = 'root',
+        print_on_terminal: bool = True) -> None | logging.Logger:
     """
     Configure logging with a log file for the specified logger or get the root logger by default.
     :param log_file: Log file name.
     :param logger: Logger to configure.
                     Default is None, which will get the root logger if 'logger_name' is not specified.
     :param logger_name: Specify logger name.
+    :param print_on_terminal: Whether to print logs on the terminal.
+                            Default is True.
     :return: None or logger.
     """
     # Use the provided logger or get the logger by name
@@ -70,8 +73,16 @@ def configure_logging_with_file(
     # Create a Formatter with the custom log format
     formatter = logging.Formatter(log_format, datefmt='%Y-%m-%d %H:%M:%S')
 
-    # Set the Formatter for both the FileHandler
+    # Set the Formatter for the FileHandler
     file_handler.setFormatter(formatter)
+
+    if print_on_terminal:
+        # Define a StreamHandler (which outputs to the terminal)
+        stream_handler = logging.StreamHandler()
+        # Set the Formatter for the StreamHandler
+        stream_handler.setFormatter(formatter)
+        # Add the StreamHandler to the root logger
+        logger.addHandler(stream_handler)
 
     # Add both the FileHandler to the logger
     logger.addHandler(file_handler)

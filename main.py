@@ -10,7 +10,7 @@ from jp_news_scraper_pipeline.configure_logging import configure_logging_with_fi
 from jp_news_scraper_pipeline.pipeline import transform_data_to_df, extract_data, \
     get_cleaned_url_list, load_to_sqlite, get_new_urls
 
-logger = configure_logging_with_file(log_file='main.log', logger_name='main')
+logger = configure_logging_with_file(log_file='main.log', logger_name='main', print_on_terminal=False)
 
 # Define the configuration command
 config_command = [

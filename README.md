@@ -31,7 +31,13 @@ Data collecting period: 25th May 2024 - 13th June 2024
   - You can **monitor only** the **flows** that are **executed** while the **local Prefect server** is **running**. 
     - This includes flows you manually run after starting the local Prefect server.
 - For more information, please refer to https://docs.prefect.io/2.10.21/host/
-
+- For more convenience, please use Prefect Cloud.
+  - Create a new Prefect Cloud account: https://app.prefect.cloud/?deviceId=54fefa17-9228-4342-aee8-73262fa61a1a
+  - Run ```prefect cloud login``` in the terminal.
+  - Run the ```main.py``` script.
+    - The dashboard can be navigated on Prefect Cloud and Prefect will give you a link to the dashboard when the script 
+      is running.
+  - More information via this link: https://docs.prefect.io/latest/getting-started/quickstart/
 
 ### Set Prefect scheduler
 - Run ```prefect server start``` in the command line terminal.
@@ -50,6 +56,7 @@ Data collecting period: 25th May 2024 - 13th June 2024
 - Navigate the Deployment which you can see the name of the deployed scheduler.
 - You **need** to **keep** the **local Prefect server** and ```scheduler.py``` **running** for the **scheduler** to be **online**.
 - For more information, please refer to https://www.prefect.io/blog/schedule-your-code-quickly-with-flow-dot-serve 
+- If you use Prefect Cloud, a scheduler will be deployed to your Prefect Cloud workspace.
 
 
 ### [jp_news_scraper_pipeline](jp_news_scraper_pipeline) Package
