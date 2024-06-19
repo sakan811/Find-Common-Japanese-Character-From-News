@@ -57,7 +57,8 @@ Data collecting period: 25th May 2024 - 13th June 2024
 - You **need** to **keep** the **local Prefect server** and ```scheduler.py``` **running** for the **scheduler** to be **online**.
 - For more information, please refer to https://www.prefect.io/blog/schedule-your-code-quickly-with-flow-dot-serve 
 - If you use Prefect Cloud, a scheduler will be deployed to your Prefect Cloud workspace.
-
+- Ensure that your directory's name doesn't have any space if you want to deploy a Prefect scheduler
+  whether it's a local or cloud Prefect server.
 
 ### [jp_news_scraper_pipeline](jp_news_scraper_pipeline) Package
 [pipeline.py](japan_news_scraper%2Fpipeline.py)
