@@ -12,21 +12,6 @@ from jp_news_scraper_pipeline.pipeline import transform_data_to_df, extract_data
 
 logger = configure_logging_with_file(log_file='main.log', logger_name='main', print_on_terminal=False)
 
-# Define the configuration command
-config_command = [
-    "prefect",
-    "config",
-    "set",
-    "PREFECT_LOGGING_SETTINGS_PATH=new_prefect_logging.yml"
-]
-
-# Run the configuration command
-try:
-    subprocess.run(config_command, check=True)
-except subprocess.CalledProcessError as e:
-    logger.error(f"Error running command: {e}")
-
-
 def set_arg_parsers() -> Namespace:
     """
     Set command line arguments.
