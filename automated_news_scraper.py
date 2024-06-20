@@ -94,27 +94,10 @@ def start_daily_news_scraper():
 
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H_%M_%S')
 
-    project_id = 'static-pottery-424015-s1'  # Replace with your actual project ID
-
-    # Initialize the GCS client
-    client = storage.Client(project=project_id)
-
-    # Specify the bucket name and destination path
-    bucket_name = 'gcp_japan_news'
-    destination_blob_name = f'{timestamp}.parquet'
-
-    # Convert DataFrame to Parquet and upload to GCS
-    logger.info('Convert DataFrame to Parquet and upload to GCS')
+    logger.info('Convert DataFrame to Parquet')
+    parquet_file_path = f'{timestamp}.parquet'
     table = pa.Table.from_pandas(filtered_df)
-    parquet_file_path = '/tmp/temp.parquet'
     pq.write_table(table, parquet_file_path)
-
-    # Upload the Parquet file to GCS
-    bucket = client.bucket(bucket_name)
-    blob = bucket.blob(destination_blob_name)
-    blob.upload_from_filename(parquet_file_path)
-
-    logger.info(f'File uploaded to {bucket_name}/{destination_blob_name}')
 
 
 if __name__ == '__main__':
