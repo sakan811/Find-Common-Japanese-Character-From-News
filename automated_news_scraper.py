@@ -16,7 +16,6 @@ import datetime
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
-from prefect import flow, get_run_logger
 
 from jp_news_scraper_pipeline.configure_logging import configure_logging
 from jp_news_scraper_pipeline.jp_news_scraper.data_extractor import extract_pos, translate_pos
@@ -36,7 +35,6 @@ def extract_kanji_from_dict(dictionary: dict) -> pd.DataFrame:
     :param dictionary: Dictionary where key is HREF and value is its text content.
     :return: DataFrame with HREF as Source and extracted kanji as Kanji columns.
     """
-    logger = get_run_logger()
     logger.info('Extract kanji from text list.')
     kanji_data = []
     tokenizer_obj = get_tokenizer()
@@ -55,9 +53,7 @@ def extract_kanji_from_dict(dictionary: dict) -> pd.DataFrame:
     return df
 
 
-@flow(name='jp-news-scraper-auto')
 def start_daily_news_scraper():
-    logger = get_run_logger()
     logger.info("Automated Scraper started")
 
     base_url = 'https://www3.nhk.or.jp'
