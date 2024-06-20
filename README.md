@@ -23,49 +23,6 @@ Data collecting period: 25th May 2024 - 13th June 2024
     ```
 - Run the script
 
-### Use Prefect dashboard to monitor the pipeline
-- Run ```prefect server start``` in the command line terminal to start a local Prefect server.
-- Click the local server link to see the Prefect's dashboard.
-  - The link is usually http://127.0.0.1:4200
-- Run ```main.py```.
-  - You can **monitor only** the **flows** that are **executed** while the **local Prefect server** is **running**. 
-    - This includes flows you manually run after starting the local Prefect server.
-- For more information, please refer to https://docs.prefect.io/2.10.21/host/
-- For more convenience, please use Prefect Cloud.
-  - Create a new Prefect Cloud account: https://app.prefect.cloud/?deviceId=54fefa17-9228-4342-aee8-73262fa61a1a
-  - Run ```prefect cloud login``` in the terminal.
-  - Run the ```main.py``` script.
-    - The dashboard can be navigated on Prefect Cloud, and Prefect will give you a link to the dashboard when the script 
-      is running.
-  - More information via this link: https://docs.prefect.io/latest/getting-started/quickstart/
-
-### Set Prefect scheduler
-- Run ```prefect server start``` in the command line terminal.
-- Go to [scheduler.py](scheduler.py)
-- Set the cron parameter as needed.
-  ```
-  if __name__ == '__main__':
-      start_news_scraper_pipeline.serve(
-          name='Japan-News-Scraper-Pipeline-Scheduler',
-          parameters={"sqlite_db": "japan_news.db", "to_sqlite": True},
-          cron='30 14 * * *')  # Adjust the cron parameter as needed
-  ```
-  - It's set to schedule every day at 9:30 PM as a default.
-- Run the script.
-- Navigate the Prefect dashboard.
-- Navigate the Deployment which you can see the name of the deployed scheduler.
-- You **need** to **keep** the **local Prefect server** and ```scheduler.py``` **running** for the **scheduler** to be **online**.
-- If you use **Prefect Cloud**, a scheduler will be deployed to your Prefect Cloud workspace.
-  - If using **Prefect Cloud**, you need to keep ```scheduler.py``` **running** for the **scheduler** to be **online**.
-- A deployment created using the ```.server``` function in ```scheduler.py``` runs the flow on the same machine 
-  where it was created. 
-  - This means the machine must stay on for the deployment to work.
-- Ensure that your directory's name doesn't have any space if you want to deploy a Prefect scheduler
-  whether it's a local or cloud Prefect server. 
-- For more information, please refer to:
-  - https://www.prefect.io/blog/schedule-your-code-quickly-with-flow-dot-serve 
-  - https://docs.prefect.io/latest/tutorial/deployments/
-
 ### [jp_news_scraper_pipeline](jp_news_scraper_pipeline) Package
 [pipeline.py](japan_news_scraper%2Fpipeline.py)
 - Contain web-scraping pipeline's functions.
