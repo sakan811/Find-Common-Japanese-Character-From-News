@@ -16,7 +16,6 @@ import datetime
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
-from google.cloud import storage
 from prefect import flow, get_run_logger
 
 from jp_news_scraper_pipeline.configure_logging import configure_logging
