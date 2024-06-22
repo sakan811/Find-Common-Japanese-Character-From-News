@@ -19,8 +19,8 @@
 /backup_japan_news/
 /*.json
 
-/*.log
-
 /my_schedulter.py
 /scheduler.py
 /new_prefect_logging.yml
+
+**/*.log

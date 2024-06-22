@@ -16,7 +16,7 @@ def extract_kanji(joined_text_list: list[str]) -> list[str]:
     tokenizer_obj = get_tokenizer()
     mode = get_tokenizer_mode()
     for text in joined_text_list:
-        words = [m.dictionary_form() for m in tokenizer_obj.tokenize(text, mode)]
+        words += [m.dictionary_form() for m in tokenizer_obj.tokenize(text, mode)]
 
     if not words:
         logger.warning('No kanji found.')
