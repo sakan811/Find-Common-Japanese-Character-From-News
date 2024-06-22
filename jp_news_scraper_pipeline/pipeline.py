@@ -55,6 +55,7 @@ def transform_data_to_df(kanji_list, pos_list, pos_translated_list) -> pd.DataFr
     df = create_df_for_japan_news_table(kanji_list, pos_list, pos_translated_list)
     filtered_df = filter_out_pos(df)
     filtered_df = filter_out_non_jp_characters(filtered_df)
+    logger.info("Return a dataframe")
     return filtered_df
 
 
@@ -78,17 +79,17 @@ def extract_data(new_urls: list[str]) -> tuple[list[str], list[str], list[str]]:
         return kanji_list, pos_list, pos_translated_list
 
 
-def load_to_sqlite(filtered_df, sqlite_db) -> None:
+def load_to_sqlite(dataframe: pd.DataFrame, sqlite_db) -> None:
     """
     Save filtered DataFrame to SQLite database.
-    :param filtered_df: Filtered DataFrame.
+    :param dataframe: Pandas DataFrame.
     :param sqlite_db: Sqlite database file path.
     :return: None
     """
     logger.info('Migrate data to SQLite database.')
     with sqlite3.connect(sqlite_db) as conn:
         create_japan_news_table(conn)
-        filtered_df.to_sql('JapanNews', conn, if_exists='append', index=False)
+        dataframe.to_sql('JapanNews', conn, if_exists='append', index=False)
         logger.info('Append to JapanNews table successfully.')
 
 

@@ -1,3 +1,7 @@
+import datetime
+import os
+
+import pandas as pd
 from sudachipy import Tokenizer, dictionary, tokenizer
 
 from jp_news_scraper_pipeline.configure_logging import configure_logging_with_file
@@ -96,6 +100,27 @@ def check_list_len(*args) -> tuple:
     logger.info(f"Checking length of target lists...")
     lengths = [len(arg) for arg in args]
     return tuple(lengths)
+
+
+def save_data_to_csv(dataframe: pd.DataFrame) -> None:
+    """
+    Save the data to a CSV file.
+    If to_sqlite is set to True, then save data to a local SQLite database, else save it to a CSV file.
+    :param dataframe: Pandas Dataframe to be saved.
+    :return: None
+    """
+    logger.info("Saving data as a CSV file...")
+
+    # Create the directory if it does not exist
+    directory = 'jp_morphemes_data_from_news'
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+        logger.info(f"Created directory: {directory}")
+
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H_%M_%S')
+    logger.info('Convert DataFrame to CSV')
+    csv_file_path = f'{directory}/jp_words_from_nhk_news_{timestamp}.csv'
+    dataframe.to_csv(csv_file_path, index=False)
 
 
 if __name__ == '__main__':
