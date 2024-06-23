@@ -39,11 +39,13 @@ def start_news_scraper_pipeline(sqlite_db: str) -> DataFrame:
             kanji_list, pos_list, pos_translated_list = extract_data(new_urls)
             return transform_data_to_df(kanji_list, pos_list, pos_translated_list)
         else:
-            logger.warning("No new URL found. Stop the Process.")
+            logger.warning("No new URL found.")
             logger.warning("Return an empty DataFrame.")
             return pd.DataFrame()
     else:
         logger.error("No URL found. Please check the tag in 'extract_href_tags' function in 'news_scraper.py'.")
+        logger.warning("Return an empty DataFrame.")
+        return pd.DataFrame()
 
 
 if __name__ == '__main__':
@@ -53,8 +55,11 @@ if __name__ == '__main__':
     # Adjust the database name as needed.
     sqlite_db = 'japan_news.db'
     df = start_news_scraper_pipeline(sqlite_db)
-    if args.to_sqlite:
-        load_to_sqlite(df, sqlite_db)
+    if not df.empty:
+        if args.to_sqlite:
+            load_to_sqlite(df, sqlite_db)
+        else:
+            save_data_to_csv(df)
     else:
-        save_data_to_csv(df)
+        logger.warning("No new URL found. No data was saved. Stop the Process.")
 
