@@ -55,3 +55,4 @@ if __name__ == '__main__':
         load_to_sqlite(df, sqlite_db)
     else:
         save_data_to_csv(df)
+

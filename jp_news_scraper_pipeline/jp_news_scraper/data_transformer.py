@@ -47,12 +47,23 @@ def add_timestamp_to_df(df: pd.DataFrame) -> None:
 
 def clean_url_list(initial_urls: list[str]) -> list[str]:
     """
-    Clean the initial href list by excluding unwanted URLs.
+    Clean the initial href list by excluding unwanted URLs and modifying specific URLs.
     :param initial_urls: Initial URL list.
     :return: A cleaned URL list.
     """
     logger.info('Clean initial href list')
-    return [url for url in initial_urls if not url.startswith('#') and not url.startswith('https:')]
+    cleaned_urls = []
+    for url in initial_urls:
+        if url.startswith('#'):
+            continue
+        elif url.startswith('https:'):
+            continue
+        elif url.startswith('//www3.nhk.or.jp'):
+            # Extract the path part of the URL
+            cleaned_urls.append(url[len('//www3.nhk.or.jp'):])
+        else:
+            cleaned_urls.append(url)
+    return cleaned_urls
 
 
 def filter_out_urls_existed_in_db(existing_urls: list[str], urls: list[str]) -> list[str]:

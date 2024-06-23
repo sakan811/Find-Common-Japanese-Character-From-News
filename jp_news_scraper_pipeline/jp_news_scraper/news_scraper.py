@@ -31,7 +31,11 @@ def extract_href_tags(soup: BeautifulSoup) -> list[str]:
     """
     logger.info(f'Extract href attributes with BeautifulSoup')
     href_tags = soup.find_all('a', href=True)
-    return [tag['href'] for tag in href_tags]
+    if len(href_tags) == 0:
+        logger.error("No href tags found. Please check the tag specified in 'extract_href_tags' function.")
+        raise SystemExit("No href tags found. Please check the tag specified in 'extract_href_tags' function.")
+    else:
+        return [tag['href'] for tag in href_tags]
 
 
 def parse_response_to_bs4(response: Response) -> BeautifulSoup:
@@ -65,7 +69,11 @@ def find_all_news_articles(inner_soup) -> bs4.ResultSet:
     """
     logger.info('Find all news articles\' texts from section tags')
     news_articles: bs4.ResultSet = inner_soup.find_all('section', class_='content--detail-main')
-    return news_articles
+    if len(news_articles) == 0:
+        logger.error("No news articles found. Please check the tag specified in 'find_all_news_articles' function.")
+        raise SystemExit("No news articles found. Please check the tag specified in 'find_all_news_articles' function.")
+    else:
+        return news_articles
 
 
 def append_extracted_text(news_articles: bs4.ResultSet) -> list[str]:
