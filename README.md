@@ -6,7 +6,7 @@ Morphemes are the smallest units of meaning in a language.
 
 Data was collected from 'https://www3.nhk.or.jp'
 
-Data collecting period: 25th May 2024 - 13th June 2024
+Data collecting period: 25th May 2024 - 23rd June 2024
 
 ## Status
 [![CodeQL](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml)    
