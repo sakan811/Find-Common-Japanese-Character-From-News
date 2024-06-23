@@ -21,9 +21,10 @@ def test_no_anchor_tags_with_href_attributes():
     html_content = '<html><body><p>No links here!</p></body></html>'
     soup = BeautifulSoup(html_content, 'html.parser')
 
-    # When / Then
-    with pytest.raises(SystemExit):
-        extract_href_tags(soup)
+    # Then
+    result = extract_href_tags(soup)
+
+    assert result == []
 
 
 def test_extract_href_tags_with_href_tags_present():
@@ -64,5 +65,6 @@ def test_no_href_tags_found():
     soup = BeautifulSoup('<a></a>', 'html.parser')
 
     # Then
-    with pytest.raises(SystemExit):
-        extract_href_tags(soup)
+    result = extract_href_tags(soup)
+
+    assert result == []

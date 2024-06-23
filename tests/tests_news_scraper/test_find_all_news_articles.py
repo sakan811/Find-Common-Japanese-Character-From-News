@@ -56,6 +56,6 @@ def test_find_all_news_articles_without_articles():
     # Create a BeautifulSoup object without any news articles
     inner_soup = BeautifulSoup("<html><body></body></html>", 'html.parser')
 
-    # Call the function with the empty BeautifulSoup object
-    with pytest.raises(SystemExit):
-        find_all_news_articles(inner_soup)  # The function should raise SystemExit
+    news_articles = find_all_news_articles(inner_soup)
+
+    assert news_articles is None

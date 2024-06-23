@@ -32,16 +32,18 @@ def start_news_scraper_pipeline(sqlite_db: str) -> DataFrame:
     initial_url = base_url + '/news/'
 
     cleaned_url_list: list[str] = get_cleaned_url_list(initial_url)
+    if cleaned_url_list:
+        new_urls: list[str] = get_new_urls(cleaned_url_list, sqlite_db)
 
-    new_urls: list[str] = get_new_urls(cleaned_url_list, sqlite_db)
-
-    if new_urls:
-        kanji_list, pos_list, pos_translated_list = extract_data(new_urls)
-        return transform_data_to_df(kanji_list, pos_list, pos_translated_list)
+        if new_urls:
+            kanji_list, pos_list, pos_translated_list = extract_data(new_urls)
+            return transform_data_to_df(kanji_list, pos_list, pos_translated_list)
+        else:
+            logger.warning("No new URL found. Stop the Process.")
+            logger.warning("Return an empty DataFrame.")
+            return pd.DataFrame()
     else:
-        logger.warning("No new URL found. Stop the Process.")
-        logger.warning("Return an empty DataFrame.")
-        return pd.DataFrame()
+        logger.error("No URL found. Please check the tag in 'extract_href_tags' function in 'news_scraper.py'.")
 
 
 if __name__ == '__main__':

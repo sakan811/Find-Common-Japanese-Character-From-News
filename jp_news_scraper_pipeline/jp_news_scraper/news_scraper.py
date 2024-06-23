@@ -32,8 +32,9 @@ def extract_href_tags(soup: BeautifulSoup) -> list[str]:
     logger.info(f'Extract href attributes with BeautifulSoup')
     href_tags = soup.find_all('a', href=True)
     if len(href_tags) == 0:
-        logger.error("No href tags found. Please check the tag specified in 'extract_href_tags' function.")
-        raise SystemExit("No href tags found. Please check the tag specified in 'extract_href_tags' function.")
+        logger.error("No href tags found.")
+        logger.info("Return an empty list")
+        return []
     else:
         return [tag['href'] for tag in href_tags]
 
@@ -61,17 +62,17 @@ def get_unique_urls(url: str) -> list[str]:
     return list(set(url_list))
 
 
-def find_all_news_articles(inner_soup) -> bs4.ResultSet:
+def find_all_news_articles(inner_soup) -> bs4.ResultSet | None:
     """
     Find all news articles from the section tag.
     :param inner_soup: BeautifulSoup object.
-    :return: Set of the news articles found by BeautifulSoup.
+    :return: Set of the news articles found by BeautifulSoup or None if news articles not found.
     """
     logger.info('Find all news articles\' texts from section tags')
     news_articles: bs4.ResultSet = inner_soup.find_all('section', class_='content--detail-main')
     if len(news_articles) == 0:
-        logger.error("No news articles found. Please check the tag specified in 'find_all_news_articles' function.")
-        raise SystemExit("No news articles found. Please check the tag specified in 'find_all_news_articles' function.")
+        logger.warning("No news articles found.")
+        return None
     else:
         return news_articles
 
@@ -106,7 +107,8 @@ def extract_text_from_url_list(href_list: list[str]) -> list[str]:
 
         news_articles = find_all_news_articles(inner_soup)
 
-        text_list += append_extracted_text(news_articles)
+        if news_articles:
+            text_list += append_extracted_text(news_articles)
 
     if not text_list:
         logger.warning('No text extracted from the news articles')
