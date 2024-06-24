@@ -9,9 +9,16 @@ Data was collected from 'https://www3.nhk.or.jp'
 Data collecting period: 25th May 2024 - 23rd June 2024
 
 ## Status
+Project Latest Update: 24 June 2024
+
 [![CodeQL](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml)    
 [![Scraper Test](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/scraper-test.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/scraper-test.yml)  
 [![Daily News Scraper](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/daily-news-scraper.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/daily-news-scraper.yml)
+
+
+## Visualizations
+Visualizations Latest Update: 24 June 2024  
+[Tableau](https://public.tableau.com/views/jp-news/Dashboard1?:language=en-US&publish=yes&:sid=&:display_count=n&:origin=viz_share_link)
 
 ## Code Base Details
 
