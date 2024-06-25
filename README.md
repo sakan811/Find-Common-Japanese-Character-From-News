@@ -18,7 +18,7 @@ Project Latest Update: 25 June 2024
 
 ## Visualizations
 Visualizations Latest Update: 25 June 2024  
-[Tableau](https://public.tableau.com/views/jp-news/Dashboard1_1?:language=th-TH&publish=yes&:sid=&:display_count=n&:origin=viz_share_link)
+[Tableau](https://public.tableau.com/views/jp-news/Top10Morphemes?:language=th-TH&publish=yes&:sid=&:display_count=n&:origin=viz_share_link)
 
 ## Code Base Details
 
