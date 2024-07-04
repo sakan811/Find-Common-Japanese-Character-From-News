@@ -6,10 +6,10 @@ Morphemes are the smallest units of meaning in a language.
 
 Data was collected from 'https://www3.nhk.or.jp'
 
-Data collecting period: 25th May 2024 - 23rd June 2024
+Data collecting period: 25 May 2024 - 4 July 2024
 
 ## Status
-Project Latest Update: 25 June 2024
+Project Latest Update: 5 July 2024
 
 [![CodeQL](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml)    
 [![Scraper Test](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/scraper-test.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/scraper-test.yml)  
@@ -17,8 +17,30 @@ Project Latest Update: 25 June 2024
 
 
 ## Visualizations
-Visualizations Latest Update: 25 June 2024  
-[Tableau](https://public.tableau.com/views/jp-news/Top10Morphemes?:language=th-TH&publish=yes&:sid=&:display_count=n&:origin=viz_share_link)
+Visualizations Latest Update: 5 July 2024
+
+[Tableau](https://public.tableau.com/views/jp-news/Top10Morphemes?:language=th-TH&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
+
+[Instagram](https://www.instagram.com/p/C9A1r-whAog/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==)
+
+[Facebook](https://www.facebook.com/permalink.php?story_fbid=pfbid0fF7edryCJeqUamiC6me2syJfWq5wAHTBXahTFeZmCseJefevKLLzGioe6ekpvwi6l&id=61553626169836)
+
+## Data
+Located in [data](data) folder
+
+### [jp_morpheme_data_from_news_as_of_2024-07-04.parquet](data%2Fjp_morpheme_data_from_news_as_of_2024-07-04.parquet)
+Contain Japanese morphemes data collected from the NHK News website.
+
+Total morphemes collected: 1,015,285 
+
+### [news_url_data_from_nhk_as_of_2024-07-04.parquet](data%2Fnews_url_data_from_nhk_as_of_2024-07-04.parquet)
+Contain urls which link to the news that the morphemes were collected from.
+
+Total Url collected: 896
+
+Urls in this file should follow https://www3.nhk.or.jp if you want to see the source.
+
+For example: https://www3.nhk.or.jp/news/html/20240523/k10014458551000.html
 
 ## Code Base Details
 
@@ -54,4 +76,4 @@ Visualizations Latest Update: 25 June 2024
 - Contain utility functions.
 
 ## [automated_news_scraper.py](automated_news_scraper.py)
-Scrape data from NHK News daily, automated with GitHub Action.
+Scrape data from NHK News daily, automated with GitHub Action. 
