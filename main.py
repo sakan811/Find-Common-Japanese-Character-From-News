@@ -9,7 +9,7 @@ from jp_news_scraper_pipeline.jp_news_scraper.utils import save_data_to_csv
 from jp_news_scraper_pipeline.pipeline import transform_data_to_df, extract_data, \
     get_cleaned_url_list, get_new_urls, load_to_sqlite
 
-logger = configure_logging_with_file(log_file='main.log', logger_name='main')
+logger = configure_logging_with_file(log_file='main.log', logger_name='main', level='INFO')
 
 
 def set_arg_parsers() -> Namespace:

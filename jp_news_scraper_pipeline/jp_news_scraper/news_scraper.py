@@ -20,7 +20,7 @@ from requests import Response
 
 from jp_news_scraper_pipeline.configure_logging import configure_logging_with_file
 
-logger = configure_logging_with_file(log_file='main.log', logger_name='main')
+logger = configure_logging_with_file(log_file='main.log', logger_name='main', level='INFO')
 
 
 def extract_href_tags(soup: BeautifulSoup) -> list[str]:
@@ -68,7 +68,7 @@ def find_all_news_articles(inner_soup) -> bs4.ResultSet | None:
     :param inner_soup: BeautifulSoup object.
     :return: Set of the news articles found by BeautifulSoup or None if news articles not found.
     """
-    logger.info('Find all news articles\' texts from section tags')
+    logger.debug('Find all news articles\' texts from section tags')
     news_articles: bs4.ResultSet = inner_soup.find_all('section', class_='content--detail-main')
     if len(news_articles) == 0:
         logger.warning("No news articles found.")
@@ -83,7 +83,7 @@ def append_extracted_text(news_articles: bs4.ResultSet) -> list[str]:
     :param news_articles: Scraped news articles.
     :return: List of extracted texts from the scraped news articles.
     """
-    logger.info('Append the extracted text from the scraped news articles to a list')
+    logger.debug('Append the extracted text from the scraped news articles to a list')
     news_article_list = []
     for news_article in news_articles:
         news_article_list.append(news_article.text)

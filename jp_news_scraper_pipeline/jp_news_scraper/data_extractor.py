@@ -2,16 +2,16 @@ from jp_news_scraper_pipeline.configure_logging import configure_logging_with_fi
 from jp_news_scraper_pipeline.jp_news_scraper.utils import get_jp_pos_dict, get_tokenizer, get_tokenizer_mode
 
 
-logger = configure_logging_with_file(log_file='main.log', logger_name='main')
+logger = configure_logging_with_file(log_file='main.log', logger_name='main', level='INFO')
 
 
-def extract_kanji(joined_text_list: list[str]) -> list[str]:
+def extract_morphemes(joined_text_list: list[str]) -> list[str]:
     """
-    Extract kanji from the text list.
+    Extract morphemes from the text list.
     :param joined_text_list: Text list.
-    :return: List of kanji.
+    :return: List of morphemes.
     """
-    logger.info('Extract kanji from text list.')
+    logger.info('Extract morphemes from text list.')
     words = []
     tokenizer_obj = get_tokenizer()
     mode = get_tokenizer_mode()
@@ -19,7 +19,7 @@ def extract_kanji(joined_text_list: list[str]) -> list[str]:
         words += [m.dictionary_form() for m in tokenizer_obj.tokenize(text, mode)]
 
     if not words:
-        logger.warning('No kanji found.')
+        logger.warning('No morphemes found.')
 
     return words
 
@@ -30,7 +30,7 @@ def extract_pos(kanji_list: list[str]) -> list[str]:
     :param kanji_list: Kanji list.
     :return: List of Part of Speech.
     """
-    logger.info('Extract Part of Speech from the Kanji list.')
+    logger.info('Extract Part of Speech from the Morpheme list.')
     part_of_speech_list = []
     tokenizer_obj = get_tokenizer()
     mode = get_tokenizer_mode()

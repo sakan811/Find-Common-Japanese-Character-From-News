@@ -18,7 +18,7 @@ import pandas as pd
 
 from jp_news_scraper_pipeline.configure_logging import configure_logging_with_file
 
-logger = configure_logging_with_file(log_file='main.log', logger_name='main')
+logger = configure_logging_with_file(log_file='main.log', logger_name='main', level='INFO')
 
 
 def create_japan_news_table(conn: sqlite3.Connection) -> None:

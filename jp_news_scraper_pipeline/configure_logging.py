@@ -1,12 +1,14 @@
 import logging
 
 
-def configure_logging(logger: logging.Logger = None, logger_name: str = 'root') -> None | logging.Logger:
+def configure_logging(logger: logging.Logger = None, logger_name: str = 'root', level: str = 'DEBUG') -> None | logging.Logger:
     """
     Configure logging for the specified logger or get the root logger by default.
     :param logger: Logger to configure.
                     Default is None, which will get the root logger if 'logger_name' is not specified.
     :param logger_name: Specify logger name.
+    :param level: Logging level.
+                    Default is 'DEBUG'.
     :return: None or logger.
     """
     # Use the provided logger or get the logger by name
@@ -18,7 +20,16 @@ def configure_logging(logger: logging.Logger = None, logger_name: str = 'root') 
         logger.handlers.clear()
 
     # Set the logging level
-    logger.setLevel(logging.DEBUG)
+    if level == 'DEBUG':
+        logger.setLevel(logging.DEBUG)
+    elif level == 'INFO':
+        logger.setLevel(logging.INFO)
+    elif level == 'WARNING':
+        logger.setLevel(logging.WARNING)
+    elif level == 'ERROR':
+        logger.setLevel(logging.ERROR)
+    elif level == 'CRITICAL':
+        logger.setLevel(logging.CRITICAL)
 
     # Define a custom log format
     log_format = '%(asctime)s | %(filename)s | line:%(lineno)d | %(funcName)s | %(levelname)s | %(message)s'
@@ -42,6 +53,7 @@ def configure_logging_with_file(
         log_file: str,
         logger: logging.Logger = None,
         logger_name: str = 'root',
+        level: str = 'DEBUG',
         print_on_terminal: bool = True) -> None | logging.Logger:
     """
     Configure logging with a log file for the specified logger or get the root logger by default.
@@ -49,6 +61,8 @@ def configure_logging_with_file(
     :param logger: Logger to configure.
                     Default is None, which will get the root logger if 'logger_name' is not specified.
     :param logger_name: Specify logger name.
+    :param level: Logging level.
+                    Default is 'DEBUG'.
     :param print_on_terminal: Whether to print logs on the terminal.
                             Default is True.
     :return: None or logger.
@@ -62,7 +76,16 @@ def configure_logging_with_file(
         logger.handlers.clear()
 
     # Set the logging level
-    logger.setLevel(logging.DEBUG)
+    if level == 'DEBUG':
+        logger.setLevel(logging.DEBUG)
+    elif level == 'INFO':
+        logger.setLevel(logging.INFO)
+    elif level == 'WARNING':
+        logger.setLevel(logging.WARNING)
+    elif level == 'ERROR':
+        logger.setLevel(logging.ERROR)
+    elif level == 'CRITICAL':
+        logger.setLevel(logging.CRITICAL)
 
     # Define a custom log format
     log_format = '%(asctime)s | %(filename)s | line:%(lineno)d | %(funcName)s | %(levelname)s | %(message)s'

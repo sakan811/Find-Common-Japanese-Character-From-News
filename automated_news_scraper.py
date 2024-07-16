@@ -20,7 +20,7 @@ import pyarrow.parquet as pq
 from jp_news_scraper_pipeline.configure_logging import configure_logging
 from jp_news_scraper_pipeline.jp_news_scraper.data_extractor import extract_pos, translate_pos
 from jp_news_scraper_pipeline.jp_news_scraper.data_transformer import filter_out_non_jp_characters, \
-    romanize_kanji, add_timestamp_to_df, filter_out_pos
+    romanize_morpheme, add_timestamp_to_df, filter_out_pos
 from jp_news_scraper_pipeline.jp_news_scraper.news_scraper import extract_text_from_url_list
 from jp_news_scraper_pipeline.jp_news_scraper.utils import check_if_all_list_len_is_equal, get_tokenizer, \
     get_tokenizer_mode
@@ -77,7 +77,7 @@ def start_daily_news_scraper():
         raise ValueError("The length of kanji_list, pos_list, and pos_translated_list are not equal.")
 
     logger.info('Romanizing Kanji...')
-    df_with_href_and_kanji['Romanji'] = df_with_href_and_kanji['Kanji'].apply(romanize_kanji)
+    df_with_href_and_kanji['Romanji'] = df_with_href_and_kanji['Kanji'].apply(romanize_morpheme)
     logger.info('Add PartOfSpeech Column')
     df_with_href_and_kanji['PartOfSpeech'] = pos_list
     logger.info('Add PartOfSpeechEnglish Column')

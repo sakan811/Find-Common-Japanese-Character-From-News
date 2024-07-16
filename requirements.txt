@@ -7,13 +7,5 @@ SudachiDict-core>=20240409
 cutlet~=0.4.0
 SudachiPy~=0.6.8
 pandas~=2.2.2
-functions-framework==3.*
-google-cloud-storage~=2.16.0
 pytest~=8.2.1
-pyodbc~=5.1.0
-SQLAlchemy~=2.0.30
-Flask~=2.2.5
-
-pyarrow~=16.1.0
-prefect~=2.19.4
-pyspark~=3.5.1
+aiohttp~=3.9.5

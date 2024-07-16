@@ -3,7 +3,7 @@ import sqlite3
 import pandas as pd
 
 from jp_news_scraper_pipeline.configure_logging import configure_logging_with_file
-from jp_news_scraper_pipeline.jp_news_scraper.data_extractor import extract_kanji, extract_pos, translate_pos
+from jp_news_scraper_pipeline.jp_news_scraper.data_extractor import extract_morphemes, extract_pos, translate_pos
 from jp_news_scraper_pipeline.jp_news_scraper.data_transformer import create_df_for_japan_news_table, \
     filter_out_non_jp_characters, \
     filter_out_pos, clean_url_list, filter_out_urls_existed_in_db, process_new_urls
@@ -67,16 +67,16 @@ def extract_data(new_urls: list[str]) -> tuple[list[str], list[str], list[str]]:
     """
     logger.info('Extracting data from new URLs list...')
     joined_text_list: list[str] = extract_text_from_url_list(new_urls)
-    kanji_list: list[str] = extract_kanji(joined_text_list)
-    pos_list: list[str] = extract_pos(kanji_list)
+    morpheme_list: list[str] = extract_morphemes(joined_text_list)
+    pos_list: list[str] = extract_pos(morpheme_list)
     pos_translated_list: list[str] = translate_pos(pos_list)
 
-    is_all_list_len_equal: bool = check_if_all_list_len_is_equal(kanji_list, pos_list, pos_translated_list)
+    is_all_list_len_equal: bool = check_if_all_list_len_is_equal(morpheme_list, pos_list, pos_translated_list)
 
     if not is_all_list_len_equal:
         raise ValueError("The length of kanji_list, pos_list, and pos_translated_list are not equal.")
     else:
-        return kanji_list, pos_list, pos_translated_list
+        return morpheme_list, pos_list, pos_translated_list
 
 
 def load_to_sqlite(dataframe: pd.DataFrame, sqlite_db) -> None:

@@ -1,3 +1,23 @@
+# Table of Contents
+- [Status](#status)
+- [Latest Update](#latest-update)
+- [Common Japanese Morphemes in News](#common-japanese-morphemes-in-news)
+- [Common Japanese Words in News](#common-japanese-words-in-news)
+
+# Status
+#### Common Japanese Morphemes in News: 🎉 **Project Completed** 🎉
+
+#### Common Japanese Words in News: 🎉 **Project Completed** 🎉
+
+[![CodeQL](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml)    
+[![Scraper Test](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/scraper-test.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/scraper-test.yml)  
+[![Daily News Scraper](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/daily-news-scraper.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/daily-news-scraper.yml)
+
+# Latest Update
+**Common Japanese Morphemes in News** Latest Update: 16 July 2024
+
+**Common Japanese Words in News** Latest Update: 16 July 2024
+
 # Common Japanese Morphemes in News
 
 Showcase visualizations and code base about the common Japanese morphemes that appear in news.
@@ -7,15 +27,6 @@ Morphemes are the smallest units of meaning in a language.
 Data was collected from 'https://www3.nhk.or.jp'
 
 Data collecting period: 25 May 2024 - 4 July 2024
-
-## Status
-#### 🎉 **Project Completed** 🎉
-
-Project Latest Update: 9 July 2024
-
-[![CodeQL](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml)    
-[![Scraper Test](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/scraper-test.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/scraper-test.yml)  
-[![Daily News Scraper](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/daily-news-scraper.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/daily-news-scraper.yml)
 
 
 ## Visualizations
@@ -44,7 +55,7 @@ Urls in this file should follow https://www3.nhk.or.jp if you want to see the so
 
 For example: https://www3.nhk.or.jp/news/html/20240523/k10014458551000.html
 
-## Code Base Details
+## Codebase Details
 
 ### To web-scrape 'https://www3.nhk.or.jp'
 - Go to [main.py](main.py)
@@ -53,6 +64,16 @@ For example: https://www3.nhk.or.jp/news/html/20240523/k10014458551000.html
     sqlite_db = 'japan_news.db' # adjust as needed
     ```
 - Run the script
+
+### Processes of [main.py](main.py)
+1. Fetch the urls which link to news articles in HNK News website.
+2. Check whether those urls are already in the database to ensure that the script doesn't scrape texts from the same source twice.
+3. Save a new set of urls to the database.
+4. Fetch news articles text from those new urls.
+5. Extract morphemes, Romanji, and Part of Speech.
+6. Clean data and transform them into a Pandas Dataframe.
+7. Save data and the news urls to a SQLite database.
+
 
 ### [jp_news_scraper_pipeline](jp_news_scraper_pipeline) Package
 [pipeline.py](japan_news_scraper%2Fpipeline.py)
@@ -79,3 +100,50 @@ For example: https://www3.nhk.or.jp/news/html/20240523/k10014458551000.html
 
 ## [automated_news_scraper.py](automated_news_scraper.py)
 Scrape data from NHK News daily, automated with GitHub Action. 
+
+# Common Japanese Words in News
+
+Showcase visualizations and code base about the common Japanese words that appear in news.
+
+This project was built on top of [Common Japanese Morphemes in News](#common-japanese-morphemes-in-news) project.
+
+Combining morphemes collected from [Common Japanese Morphemes in News](#common-japanese-morphemes-in-news) project into
+words by looking them up in the dictionary.
+
+Words that aren't in the dictionary were filtered out.
+
+The Japanese dictionary for word-lookup is based on JMdict: https://github.com/themoeway/jmdict-yomitan
+
+Data collecting period: 25 May 2024 - 4 July 2024
+
+## Visualizations
+Visualizations Latest Update: 16 July 2024
+
+[Tableau](https://public.tableau.com/views/JPWordsfromNHKNews/Top10JapaneseWordsfromNewsDashboard?:language=th-TH&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
+
+[Instagram](https://www.instagram.com/p/C9fQMe5sGI4/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==)
+
+[Facebook](https://www.facebook.com/permalink.php?story_fbid=pfbid02xBnyAmmdw8hu8YMBxQdzPbnAkYRAWXwMJspkzKwQqaZrHCWLtEeZK1s8BsLdNpAGl&id=61553626169836)
+
+
+## Data
+Located in [data](data) folder
+
+### [jp_word_data_from_news_as_of_2024-07-04.parquet](data%2Fjp_word_data_from_news_as_of_2024-07-04.parquet)
+Contain Japanese words data from NHK News.
+
+Total Japanese Words: 426,217
+
+## Codebase Details
+[morpheme_to_word.py](morpheme_to_word.py)
+- Contain functions that combine Japanese morphemes to words
+- If you have scrape morphemes from NHK News
+  by using scripts from [Common Japanese Morphemes in News](#common-japanese-morphemes-in-news) project,
+  you can run this script to find Japanese words from the same sources.
+
+### Processes of [morpheme_to_word.py](morpheme_to_word.py)
+  1. It fetches the news urls stored in NewsUrls table in the database and scraped the news article.
+  2. It extracts morphemes from the articles, clean non-Japanese characters, and combines them into words by looking up
+    the words in the dictionary.
+  3. Part of Speech and Romanji are added for each word before transform them into a Pandas dataframe.
+  4. Load the dataframe into a SQLite database and clean the Part of Speech column.

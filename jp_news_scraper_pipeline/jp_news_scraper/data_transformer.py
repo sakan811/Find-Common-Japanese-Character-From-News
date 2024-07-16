@@ -23,16 +23,16 @@ from jp_news_scraper_pipeline.configure_logging import configure_logging_with_fi
 from jp_news_scraper_pipeline.jp_news_scraper.utils import get_excluded_jp_pos
 
 
-logger = configure_logging_with_file(log_file='main.log', logger_name='main')
+logger = configure_logging_with_file(log_file='main.log', logger_name='main', level='INFO')
 
 
-def romanize_kanji(kanji: str) -> str:
+def romanize_morpheme(morpheme: str) -> str:
     """
-    Romanize kanji.
-    :param kanji: Kanji.
-    :return: Romanized kanji.
+    Romanize Japanese morpheme.
+    :param morpheme: Morpheme.
+    :return: Romanized morpheme.
     """
-    return cutlet.Cutlet().romaji(kanji)
+    return cutlet.Cutlet().romaji(morpheme)
 
 
 def add_timestamp_to_df(df: pd.DataFrame) -> None:
@@ -109,7 +109,7 @@ def create_df_for_japan_news_table(
     logger.info('Create DataFrame with Kanji column')
     df = pd.DataFrame(kanji_list, columns=['Kanji'])
     logger.info('Add Romanji Column')
-    df['Romanji'] = df['Kanji'].apply(romanize_kanji)
+    df['Romanji'] = df['Kanji'].apply(romanize_morpheme)
     logger.info('Add PartOfSpeech Column')
     df['PartOfSpeech'] = pos_list
     logger.info('Add PartOfSpeechEnglish Column')
