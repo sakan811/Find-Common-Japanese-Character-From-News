@@ -9,3 +9,4 @@ SudachiPy~=0.6.8
 pandas~=2.2.2
 pytest~=8.2.1
 aiohttp~=3.9.5
+pyarrow~=16.1.0
