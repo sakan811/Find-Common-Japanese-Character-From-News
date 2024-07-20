@@ -440,7 +440,10 @@ def clean_pos_in_db(database: str) -> None:
 
 
 if __name__ == '__main__':
+    # SQLite database is needed.
+    # Adjust the database name as needed.
     sqlite_db = 'japan_news_test.db'
+
     url_list: list[str] = get_url_list_from_db(sqlite_db)
     text_list: list[str] = asyncio.run(extract_text_from_url_list_with_async(url_list))
 

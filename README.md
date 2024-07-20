@@ -61,7 +61,7 @@ For example: https://www3.nhk.or.jp/news/html/20240523/k10014458551000.html
 - Go to [main.py](main.py)
 - Adjust the SQLite database name as needed
     ```
-    sqlite_db = 'japan_news.db' # adjust as needed
+    sqlite_db = 'japan_news_test.db' # adjust as needed
     ```
 - Run the script
 
@@ -139,6 +139,14 @@ Total Japanese Words: 426,217
 - Contain functions that **combine** **Japanese morphemes** to **words**
 - You **need** to have **news urls** from **NHK News** **stored** in the **SQLite database** first before running this script.
   - Which means you **should run** [main.py](main.py) to **scrape morphemes** from the **NHK News** first.
+
+### To Combine Morphemes to Words
+- Go to [morpheme_to_word.py](morpheme_to_word.py)
+- Adjust the SQLite database name to be the same one you used for the [main.py](main.py)
+    ```
+    sqlite_db = 'japan_news_test.db' # adjust as needed
+    ```
+- Run [morpheme_to_word.py](morpheme_to_word.py)
 
 ### Processes of [morpheme_to_word.py](morpheme_to_word.py)
   1. It fetches the news urls stored in NewsUrls table in the database and scraped the news article.
