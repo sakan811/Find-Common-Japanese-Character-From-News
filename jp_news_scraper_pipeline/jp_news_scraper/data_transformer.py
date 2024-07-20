@@ -118,13 +118,14 @@ def create_df_for_japan_news_table(
     return df
 
 
-def process_new_urls(conn: sqlite3.Connection, new_urls: list[str]) -> None:
+def load_new_urls_to_db(conn: sqlite3.Connection, new_urls: list[str]) -> None:
     """
-    Process new URLs.
-    :param conn: Sqlite3 connection
-    :param new_urls: News URL list
+    Load new urls to the SQLite database.
+    :param conn: Sqlite3 connection to the database.
+    :param new_urls: News URL list.
     :return: None
     """
+    logger.info("Loading a new set of news urls into the SQLite database...")
     if new_urls:
         logger.info('Prepare DataFrame for new URLs')
         df = pd.DataFrame(new_urls, columns=['Url'])

@@ -6,22 +6,22 @@ from jp_news_scraper_pipeline.configure_logging import configure_logging_with_fi
 from jp_news_scraper_pipeline.jp_news_scraper.data_extractor import extract_morphemes, extract_pos, translate_pos
 from jp_news_scraper_pipeline.jp_news_scraper.data_transformer import create_df_for_japan_news_table, \
     filter_out_non_jp_characters, \
-    filter_out_pos, clean_url_list, filter_out_urls_existed_in_db, process_new_urls
+    filter_out_pos, clean_url_list, filter_out_urls_existed_in_db, load_new_urls_to_db
 from jp_news_scraper_pipeline.jp_news_scraper.news_scraper import extract_text_from_url_list, get_unique_urls
 from jp_news_scraper_pipeline.jp_news_scraper.sqlite_functions import create_japan_news_table, create_news_url_table, \
     fetch_exist_url_from_db
 from jp_news_scraper_pipeline.jp_news_scraper.utils import check_if_all_list_len_is_equal
 
-logger = configure_logging_with_file(log_file='main.log', logger_name='main')
+logger = configure_logging_with_file(log_file='main.log', logger_name='main', level='INFO')
 
 
-def get_cleaned_url_list(initial_url):
+def get_cleaned_url_list(initial_url: str):
     """
     Get a cleaned URL list from the initial URL list.
     :param initial_url: An Initial URL list.
     :return: A list of cleaned URL.
     """
-    logger.info("Get a cleaned Href list from the initial Href list.")
+    logger.info("Getting a cleaned Href list from the initial Href list...")
     initial_urls: list[str] = get_unique_urls(initial_url)
     cleaned_url_list: list[str] = clean_url_list(initial_urls)
     return cleaned_url_list
@@ -34,12 +34,10 @@ def get_new_urls(cleaned_url_list, sqlite_db) -> list[str]:
     :param sqlite_db: SQLite database.
     :return: New urls as a list.
     """
-    logger.info('Get new urls from cleaned URL list.')
+    logger.info('Getting new urls from cleaned URL list...')
     with sqlite3.connect(sqlite_db) as conn:
-        create_news_url_table(conn)
         existing_urls: list[str] = fetch_exist_url_from_db(conn)
         new_urls: list[str] = filter_out_urls_existed_in_db(existing_urls, cleaned_url_list)
-        process_new_urls(conn, new_urls)
     return new_urls
 
 

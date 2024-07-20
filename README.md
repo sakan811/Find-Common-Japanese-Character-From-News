@@ -136,10 +136,9 @@ Total Japanese Words: 426,217
 
 ## Codebase Details
 [morpheme_to_word.py](morpheme_to_word.py)
-- Contain functions that combine Japanese morphemes to words
-- If you have scrape morphemes from NHK News
-  by using scripts from [Common Japanese Morphemes in News](#common-japanese-morphemes-in-news) project,
-  you can run this script to find Japanese words from the same sources.
+- Contain functions that **combine** **Japanese morphemes** to **words**
+- You **need** to have **news urls** from **NHK News** **stored** in the **SQLite database** first before running this script.
+  - Which means you **should run** [main.py](main.py) to **scrape morphemes** from the **NHK News** first.
 
 ### Processes of [morpheme_to_word.py](morpheme_to_word.py)
   1. It fetches the news urls stored in NewsUrls table in the database and scraped the news article.

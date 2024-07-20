@@ -71,7 +71,6 @@ def find_all_news_articles(inner_soup) -> bs4.ResultSet | None:
     logger.debug('Find all news articles\' texts from section tags')
     news_articles: bs4.ResultSet = inner_soup.find_all('section', class_='content--detail-main')
     if len(news_articles) == 0:
-        logger.warning("No news articles found.")
         return None
     else:
         return news_articles
@@ -109,6 +108,8 @@ def extract_text_from_url_list(href_list: list[str]) -> list[str]:
 
         if news_articles:
             text_list += append_extracted_text(news_articles)
+        else:
+            logger.warning(f"No news articles found from url: {url}.")
 
     if not text_list:
         logger.warning('No text extracted from the news articles')

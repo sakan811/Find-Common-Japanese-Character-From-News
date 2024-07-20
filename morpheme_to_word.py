@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import glob
 import json
 import os
@@ -99,26 +100,28 @@ def combine_morpheme_to_word(morphemes, dictionary, max_word_length=20):
     return word_list
 
 
-def get_url_list_from_db() -> list:
+def get_url_list_from_db(database: str) -> list:
     """
     Get a list of urls from a database.
+    :param database: Path to SQLite database.
     :return: List of urls.
     """
     logger.info('Getting urls from database...')
-    with sqlite3.connect('japan_news.db') as con:
+    with sqlite3.connect(database) as con:
         cur = con.cursor()
         result = cur.execute('''select * from NewsUrls''')
         return [row[0] for row in result]
 
 
-def load_data_to_db(df: pd.DataFrame) -> None:
+def load_data_to_db(df: pd.DataFrame, database: str) -> None:
     """
     Load data into SQLite database.
     :param df: Dataframe with Japanese words data.
+    :param database: Path to SQLite database.
     :return: None
     """
     logger.info('Loading data into SQLite database...')
-    with sqlite3.connect('japan_news.db') as con:
+    with sqlite3.connect(database) as con:
         query = '''
         Create table if not exists JapaneseWords (
             ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -146,7 +149,9 @@ async def extract_text_from_url(href: str, session: aiohttp.ClientSession) -> li
     news_articles = find_all_news_articles(soup)
     if news_articles:
         return append_extracted_text(news_articles)
-    return []
+    else:
+        logger.warning(f"No news articles found from url: {url}.")
+        return []
 
 
 async def extract_text_from_url_list_with_async(href_list: list[str]) -> list[str]:
@@ -305,13 +310,14 @@ def clean_jp_text_list(text_list):
     return cleaned_list
 
 
-def clean_pos_in_db() -> None:
+def clean_pos_in_db(database: str) -> None:
     """
     Clean the Part of Speech column in JapaneseWords table.
+    :param database: Path to the SQLite database.
     :return: None
     """
     logger.info('Cleaning Part of Speech column...')
-    with sqlite3.connect('japan_news.db') as connection:
+    with sqlite3.connect(database) as connection:
         clean_noun_query = '''
         update JapaneseWords
         set PartOfSpeech = 'Noun'
@@ -434,7 +440,8 @@ def clean_pos_in_db() -> None:
 
 
 if __name__ == '__main__':
-    url_list: list[str] = get_url_list_from_db()
+    sqlite_db = 'japan_news_test.db'
+    url_list: list[str] = get_url_list_from_db(sqlite_db)
     text_list: list[str] = asyncio.run(extract_text_from_url_list_with_async(url_list))
 
     jp_dictionary = get_jp_dict()
@@ -443,9 +450,11 @@ if __name__ == '__main__':
 
     if df_list:
         main_df = pd.concat(df_list)
-        load_data_to_db(main_df)
+        main_df['TimeStamp'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-        clean_pos_in_db()
+        load_data_to_db(main_df, sqlite_db)
+
+        clean_pos_in_db(sqlite_db)
     else:
         logger.warning('Dataframe list is empty. Stop the process')
 
