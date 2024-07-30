@@ -10,13 +10,36 @@
 #### Common Japanese Words in News: 🎉 **Project Completed** 🎉
 
 [![CodeQL](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/codeql.yml)    
+
 [![Scraper Test](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/scraper-test.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/scraper-test.yml)  
+
 [![Daily News Scraper](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/daily-news-scraper.yml/badge.svg)](https://github.com/sakan811/Find-Common-Japanese-Words-From-News/actions/workflows/daily-news-scraper.yml)
 
 # Latest Update
-**Common Japanese Morphemes in News** Latest Update: 16 July 2024
+**Common Japanese Morphemes in News** Latest Update: 30 July 2024
 
-**Common Japanese Words in News** Latest Update: 16 July 2024
+**Common Japanese Words in News** Latest Update: 30 July 2024
+
+# Visualizations
+[Common Japanese Morphemes in News](#common-japanese-morphemes-in-news):
+
+* Visualizations Latest Update: 5 July 2024
+
+  * [Tableau](https://public.tableau.com/views/jp-news/Top10Morphemes?:language=th-TH&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
+
+  * [Instagram](https://www.instagram.com/p/C9A1r-whAog/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==)
+
+  * [Facebook](https://www.facebook.com/permalink.php?story_fbid=pfbid0fF7edryCJeqUamiC6me2syJfWq5wAHTBXahTFeZmCseJefevKLLzGioe6ekpvwi6l&id=61553626169836)
+
+[Common Japanese Words in News](#common-japanese-words-in-news):
+
+* Visualizations Latest Update: 16 July 2024
+
+  * [Tableau](https://public.tableau.com/views/JPWordsfromNHKNews/Top10JapaneseWordsfromNewsDashboard?:language=th-TH&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
+
+  * [Instagram](https://www.instagram.com/p/C9fQMe5sGI4/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==)
+
+  * [Facebook](https://www.facebook.com/permalink.php?story_fbid=pfbid02xBnyAmmdw8hu8YMBxQdzPbnAkYRAWXwMJspkzKwQqaZrHCWLtEeZK1s8BsLdNpAGl&id=61553626169836)
 
 # Common Japanese Morphemes in News
 
@@ -29,14 +52,6 @@ Data was collected from 'https://www3.nhk.or.jp'
 Data collecting period: 25 May 2024 - 4 July 2024
 
 
-## Visualizations
-Visualizations Latest Update: 5 July 2024
-
-[Tableau](https://public.tableau.com/views/jp-news/Top10Morphemes?:language=th-TH&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
-
-[Instagram](https://www.instagram.com/p/C9A1r-whAog/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==)
-
-[Facebook](https://www.facebook.com/permalink.php?story_fbid=pfbid0fF7edryCJeqUamiC6me2syJfWq5wAHTBXahTFeZmCseJefevKLLzGioe6ekpvwi6l&id=61553626169836)
 
 ## Data
 Located in [data](data) folder
@@ -115,15 +130,6 @@ Words that aren't in the dictionary were filtered out.
 The Japanese dictionary for word-lookup is based on JMdict: https://github.com/themoeway/jmdict-yomitan
 
 Data collecting period: 25 May 2024 - 4 July 2024
-
-## Visualizations
-Visualizations Latest Update: 16 July 2024
-
-[Tableau](https://public.tableau.com/views/JPWordsfromNHKNews/Top10JapaneseWordsfromNewsDashboard?:language=th-TH&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
-
-[Instagram](https://www.instagram.com/p/C9fQMe5sGI4/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==)
-
-[Facebook](https://www.facebook.com/permalink.php?story_fbid=pfbid02xBnyAmmdw8hu8YMBxQdzPbnAkYRAWXwMJspkzKwQqaZrHCWLtEeZK1s8BsLdNpAGl&id=61553626169836)
 
 
 ## Data

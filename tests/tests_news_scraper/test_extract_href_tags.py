@@ -1,4 +1,3 @@
-import pytest
 from bs4 import BeautifulSoup
 
 from jp_news_scraper_pipeline.jp_news_scraper.news_scraper import extract_href_tags
