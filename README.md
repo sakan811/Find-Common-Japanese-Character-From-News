@@ -23,10 +23,10 @@ Data collecting period: 25 May 2024 - 4 July 2024
 # Visualizations
 [Common Japanese Morphemes in News](#common-japanese-morphemes-in-news):
 
-* Visualizations Latest Update: 5 July 2024
+* Visualizations Latest Update: 13 October 2024
 
-  * [Tableau](https://public.tableau.com/views/jp-news/Top10Morphemes?:language=th-TH&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
-
+  * [Tableau](https://public.tableau.com/views/jp-news/Top10Morphemes?:language=th-TH&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
+  
   * [Instagram](https://www.instagram.com/p/C9A1r-whAog/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==)
 
   * [Facebook](https://www.facebook.com/permalink.php?story_fbid=pfbid0fF7edryCJeqUamiC6me2syJfWq5wAHTBXahTFeZmCseJefevKLLzGioe6ekpvwi6l&id=61553626169836)
