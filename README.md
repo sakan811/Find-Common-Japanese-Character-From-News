@@ -27,10 +27,10 @@ Data collecting period: 25 May 2024 - 4 July 2024
 
   * [Tableau](https://public.tableau.com/views/jp-news/Top10Morphemes?:language=th-TH&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
   
-  * [Instagram](https://www.instagram.com/p/C9A1r-whAog/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==)
+  * [Instagram](https://www.instagram.com/p/DBEHq0OPOA-/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==)
 
-  * [Facebook](https://www.facebook.com/permalink.php?story_fbid=pfbid0fF7edryCJeqUamiC6me2syJfWq5wAHTBXahTFeZmCseJefevKLLzGioe6ekpvwi6l&id=61553626169836)
-
+  * [Facebook](https://www.facebook.com/share/p/H8ZACWLTbCZeY5ur/)
+  
 # Data
 Located in [data](data) folder
 
