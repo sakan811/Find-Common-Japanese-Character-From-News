@@ -6,10 +6,9 @@ from jp_news_scraper_pipeline.configure_logging import configure_logging_with_fi
 from jp_news_scraper_pipeline.jp_news_scraper.data_extractor import extract_morphemes, extract_pos, translate_pos
 from jp_news_scraper_pipeline.jp_news_scraper.data_transformer import create_df_for_japan_news_table, \
     filter_out_non_jp_characters, \
-    filter_out_pos, clean_url_list, filter_out_urls_existed_in_db, load_new_urls_to_db
+    filter_out_pos, clean_url_list, filter_out_urls_existed_in_db
 from jp_news_scraper_pipeline.jp_news_scraper.news_scraper import extract_text_from_url_list, get_unique_urls
-from jp_news_scraper_pipeline.jp_news_scraper.sqlite_functions import create_japan_news_table, create_news_url_table, \
-    fetch_exist_url_from_db
+from jp_news_scraper_pipeline.jp_news_scraper.sqlite_functions import create_japan_news_table, fetch_exist_url_from_db
 from jp_news_scraper_pipeline.jp_news_scraper.utils import check_if_all_list_len_is_equal
 
 logger = configure_logging_with_file(log_file='main.log', logger_name='main', level='INFO')
