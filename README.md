@@ -49,12 +49,16 @@ Urls in this file should follow https://www3.nhk.or.jp if you want to see the so
 For example: https://www3.nhk.or.jp/news/html/20240523/k10014458551000.html
 
 # How to Web-Scrape Japanese News to Extract Japanese Morphemes 
+- Clone this repo: https://github.com/sakan811/Find-Common-Japanese-Character-From-News.git
 - Go to [main.py](main.py)
 - Adjust the SQLite database name as needed
     ```
     sqlite_db = 'japan_news_test.db' # adjust as needed
     ```
-- Run the script
+- Run the script:
+  ```bash
+  python main.py
+  ```
 
 # [automated_news_scraper.py](automated_news_scraper.py)
 Scrape data from NHK News daily, automated with GitHub Action.
