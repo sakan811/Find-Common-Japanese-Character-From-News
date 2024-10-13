@@ -32,3 +32,4 @@
 /visuals/
 **/*.twb
 **/*.twbx
+/data/jp_word_data_from_news_as_of_2024-07-04.parquet
